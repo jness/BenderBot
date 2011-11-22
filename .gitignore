@@ -1,0 +1,6 @@
+*.pyc
+*.swp
+*egg*
+.token
+.cache
+Config/bot.conf

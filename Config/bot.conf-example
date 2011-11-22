@@ -1,0 +1,10 @@
+[IRC]
+server = irc.example.com
+port = 6667
+channel = #test
+botnick = BenderBot
+altbotnick = BenderBot2
+check_interval = 300
+
+[WEATHER]
+url = http://www.google.com/ig/api?weather=Austin,TX
