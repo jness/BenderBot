@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from multiprocessing import Process
-import ConfigParser, os
-from re import match
+import ConfigParser
 from time import sleep
 
 from Lib.irctoolbox import IRC
