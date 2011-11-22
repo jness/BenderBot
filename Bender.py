@@ -15,7 +15,7 @@ class IRCbot(Process):
             data = self.ircsock.recv(2048).strip('\n\r')
             if data.find("PING :") != -1:
                 print '[INFO] received: %s' % str(data)
-                self.irc.ping()
+                self.irc.ping(data)
 
 def connect(irc):
     '''Simply connect to the IRC server'''

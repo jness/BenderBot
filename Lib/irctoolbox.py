@@ -32,8 +32,8 @@ class IRC:
     def joinchan(self, channel):
       self.ircsock.send("JOIN "+ channel +"\n")
     
-    def ping(self):
-      self.ircsock.send("PONG :pingis\n")
+    def ping(self, data):
+      self.ircsock.send("PONG " + data.split()[1] + "\r\n")
 
     def post(self, msg):
       self.ircsock.send("PRIVMSG "+ self.channel +" :"+ msg +"\n")
