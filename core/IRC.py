@@ -5,6 +5,7 @@ from random import randint
 from ConfigParser import ConfigParser
 from core.Configuration import get_config
 
+# read in our configuration for passing to kwargs
 config = get_config()
 config_dict = dict(config.items('IRC'))
 

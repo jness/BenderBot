@@ -8,6 +8,7 @@ from core.Configuration import get_config
 from urllib2 import urlopen
 from json import loads
 
+# read in our configuration for later use
 config = get_config()
 
 class Bender(Process):
@@ -31,7 +32,9 @@ class Github(Process):
             sleep(300)
 
 def main():
-    '''Our main function which is called on script start'''
+    '''This is an example script which shows how to use BenderBot,
+    and interact with its classes'''
+    
     # call our IRC core class to handle everything IRC
     irc = IRC()
     irc.connect()
