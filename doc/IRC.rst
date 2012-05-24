@@ -2,4 +2,4 @@
 ======================
 
 .. autoclass:: BenderBot.IRC.IRC
-    :members: 
+    :members:

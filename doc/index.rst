@@ -7,8 +7,9 @@ Welcome to BenderBot's documentation!
 =====================================
 
 BenderBot is A configurable bare bone IRC bot written in Python.
+
 We provide a number of use IRC method by means of a IRC class,
-and give examples of written a process driven IRC bot in Bender.py
+and give examples of written a process driven IRC bot in ``examples/Bender.py``
 
 Contents:
 

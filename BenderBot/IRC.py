@@ -11,9 +11,7 @@ config_dict = dict(config.items('IRC'))
 
 class IRC:
     def __init__(self, **kwargs):
-        '''called when the class is first sourced.
-        __init__ will handle setting up IRC settings pulled in form
-        the configuration or default with the use of kwargs.get()'''
+        '''Our initializer that sets our server attributes'''
         kwargs.update(config_dict)
         self.server = kwargs.get('server',"irc.freenode.net")
         self.port = kwargs.get('port',"6667")
@@ -22,9 +20,20 @@ class IRC:
         self.nickmsg = kwargs.get('nickmsg', 'Bite my shiny metal ass')
         
     def connect(self):
-        '''should be called after your source the IRC class,
-        this method will connect to the IRC server, set the nick, and
-        join a channel all based on the configuration'''
+        ''' The ``connect`` method performs a couple of key actions.
+        Using the attributes set in ``__init__`` we are able to connect
+        to the IRC server, set the users nick, and join a channel.
+        
+        - **method usage**::
+
+            >>> from BenderBot.IRC import IRC
+            >>> irc = IRC()
+            >>> irc.connect()
+            [INFO] connecting to irc.freenode.net:6667
+            [INFO] setting nick to BenderBot
+            [INFO] joining channel #bender-test
+        
+        '''
         print '[INFO] connecting to %s:%s' % (self.server, self.port)
         self.ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ircsock.settimeout(5)
@@ -50,10 +59,22 @@ class IRC:
         self.__joinchannel()
                 
     def readsocket(self):
-        '''will read from the IRC socket,
-        it will return the socket data or if the socket buffer
-        is empty it will return None'''
-        # first lets verify the socket is available still
+        '''The ``readsocket`` method will first validate a socket is
+        available by running ``__checksocket``, we will then retrieve
+        2048 bytes from the socket and strip newline feeds.
+        
+        Since we read from the buffer here we also need to check for
+        **PING**, we do this with ``__checkping``.
+        
+        The method will then return you the response from the IRC server,
+        or None if the buffer was empty:
+        
+        - **method usage**::
+        
+            >>> irc.readsocket()
+            ':user1!~user1@127.0.0.1 PRIVMSG #bender-test :Hello BenderBot '
+        
+        '''
         self.__checksocket()
         try:
             response = self.ircsock.recv(2048).strip('\n\r')
@@ -66,20 +87,38 @@ class IRC:
             return None
     
     def quit(self):
-        'will close the current socket'
+        '''the ``quit`` method will close the current socket
+        
+        - **method usage**::
+            
+            >>> irc.quit()
+        '''
         self.ircsock.close()
             
     def sendchannel(self, msg):
-        '''send a message to the joined channel,
-        this is the channel configured in config/bot.conf'''
-        # first lets verify the socket is available still
+        '''the ``sendchannel`` method sends a message to the current
+        joine channel defined by ``self.channel``. Before we send a message
+        we first confirm the socket is available with ``__checksocket()
+        
+        - **method usage**
+        
+            >>> irc.sendchannel('Bite my shiny metal ass meatbag!')
+            55
+        '''
         self.__checksocket()
         response = self.ircsock.send("PRIVMSG %s :%s\n" % (self.channel, msg))
         return response
 
     def sendnick(self, nick, msg):
-        '''will send a private message to the IRC user''' 
-        # first lets verify the socket is available still
+        '''the ``sendnick`` method sends a message to a specific user nick.
+        Before we send a message we first confirm the socket is available
+        with ``__checksocket()
+        
+        - **method usage**
+        
+            >>> irc.sendnick('user1', 'Bite my shiny metal ass meatbag!')
+            48
+        '''
         self.__checksocket()
         response = self.ircsock.send("PRIVMSG %s :%s\n" % (nick, msg))
         return response
