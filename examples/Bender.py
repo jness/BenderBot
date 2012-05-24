@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from multiprocessing import Process
 from time import sleep
-from core.IRC import IRC
-from core.Configuration import get_config
+from BenderBot.IRC import IRC
+from BenderBot.Configuration import get_config
 
 # imports for example Github process
 from urllib2 import urlopen
