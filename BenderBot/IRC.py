@@ -97,7 +97,7 @@ class IRC:
             
     def sendchannel(self, msg):
         '''the ``sendchannel`` method sends a message to the current
-        joine channel defined by ``self.channel``. Before we send a message
+        joined channel defined by ``self.channel``. Before we send a message
         we first confirm the socket is available with ``__checksocket()
         
         - **method usage**
