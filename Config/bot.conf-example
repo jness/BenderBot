@@ -1,10 +1,8 @@
 [IRC]
-server = irc.example.com
+server = irc.freenode.net
 port = 6667
-channel = #test
+channel = #bender-test
 botnick = BenderBot
-altbotnick = BenderBot2
-check_interval = 300
 
-[WEATHER]
-url = http://www.google.com/ig/api?weather=Austin,TX
+[Github]
+url = https://api.github.com/repos/jness/BenderBot

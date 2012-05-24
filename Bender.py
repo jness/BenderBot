@@ -1,83 +1,50 @@
 #!/usr/bin/env python
 from multiprocessing import Process
-import ConfigParser
 from time import sleep
+from core.IRC import IRC
+from core.Configuration import get_config
 
-from Lib.irctoolbox import IRC
+# imports for example Github process
+from urllib2 import urlopen
+from json import loads
 
-class IRCbot(Process):
+config = get_config()
+
+class Bender(Process):
+    'Bender is a class that reads from the IRC socket'
+    def run(self):
+        '''Here is where we perform the loop that reads
+        data from the IRC server, we can handle IRC task here'''
+        while True:
+            response =  self.irc.readsocket()
+            sleep(1)
+            
+class Github(Process):
+    'A example Process for checking a Github repo using API'
     def run(self):
         while True:
-            # verify socket before reading
-            self.ircsock = check_socket(self.ircsock, self.irc)
-            
-            # go ahead and recv
-            data = self.ircsock.recv(2048).strip('\n\r')
-            if data.find("PING :") != -1:
-                print '[INFO] received: %s' % str(data)
-                self.irc.ping(data)
-
-def connect(irc):
-    '''Simply connect to the IRC server'''
-    ircsock = irc.connect()
-    return ircsock
-
-def check_socket(ircsock, irc):
-    '''Only way to verify a socket is to read from it'''
-    try:
-        ircsock.getsockname()
-    except:
-        ircsock, irc = connect()
-    return ircsock
+            print '[INFO] running Custom Github Process'
+            res = urlopen(config.get('Github', 'url')).read()
+            repo = loads(res)
+            self.irc.sendchannel('%s last pushed @ %s' % (
+                                            repo['name'], repo['pushed_at']))
+            sleep(300)
 
 def main():
-    '''Our main function which is call on script start'''
-
-    # Load our Configuration
-    config = ConfigParser.ConfigParser()
-    config.readfp(open('Config/bot.conf'))
-
-    # link to our IRC Class
+    '''Our main function which is called on script start'''
+    # call our IRC core class to handle everything IRC
     irc = IRC()
-    irc.server = config.get('IRC', 'server')
-    irc.port = config.get('IRC', 'port')
-    irc.channel = config.get('IRC', 'channel')
-    irc.botnick = config.get('IRC', 'botnick')
-    irc.altbotnick = config.get('IRC', 'altbotnick')
-    ircsock = connect(irc)
+    irc.connect()
 
-    # Start IRC Loop
-    I = IRCbot()
-    I.ircsock = ircsock
-    I.irc = irc
-    I.start()
-
-    #
-    # Start our own process below
-    # these process can check external API and post
-    # to the channel or pretty much anything you like.
-    #
-    # For example I will use Google's Weather XML 
-    # to inform the channel of the Weather in Austin TX.
-    #
-    while True:
-        from urllib2 import urlopen
-        from xml.dom import minidom
-        
-        check_interval = config.get('IRC', 'check_interval')
-        weather_url = config.get('WEATHER', 'url')
-
-        print '[INFO] custom process running'
-        dom = minidom.parse(urlopen(weather_url))
-
-        current = dom.getElementsByTagName('current_conditions')
-        temp = current[0].getElementsByTagName('temp_f')[0].getAttribute('data')
-
-        irc.post('Current temperature in Austin Texas is %sF' % temp)
-
-        # sleep until next iteration
-        sleep(int(check_interval))
-
+    # start our Bender Process
+    bender = Bender()
+    bender.irc = irc
+    bender.start()
+    
+    # start our Weather Example Process
+    github = Github()
+    github.irc = irc
+    github.start()
 
 if __name__ == '__main__':
     main()
