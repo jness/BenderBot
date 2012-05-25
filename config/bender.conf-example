@@ -4,5 +4,11 @@ port = 6667
 channel = #bender-test
 botnick = BenderBot
 
-[Github]
-url = https://api.github.com/repos/jness/BenderBot
+[ExternalProcess]
+# An external process in BenderBot for running a custom
+# python function, the example below will use the datetime module
+# to then run datetime.datetime.now().ctime() and send the
+# results to the IRC channel every 30 seconds.
+module = datetime
+function = datetime.now().ctime()
+interval = 30

@@ -4,8 +4,8 @@ from time import sleep
 from random import randint
 from ConfigParser import ConfigParser
 from BenderBot.Configuration import get_config
+from BenderBot.Logger import get_logger
 
-# read in our configuration for passing to kwargs
 config = get_config()
 config_dict = dict(config.items('IRC'))
 
@@ -18,6 +18,7 @@ class IRC:
         self.channel = kwargs.get('channel',"#BenderTest")
         self.botnick = kwargs.get('botnick',"BenderBot")
         self.nickmsg = kwargs.get('nickmsg', 'Bite my shiny metal ass')
+        self.logger = kwargs.get('logger', get_logger())
         
     def connect(self):
         ''' The ``connect`` method performs a couple of key actions.
@@ -34,7 +35,7 @@ class IRC:
             [INFO] joining channel #bender-test
         
         '''
-        print '[INFO] connecting to %s:%s' % (self.server, self.port)
+        self.logger.info('connecting to %s:%s' % (self.server, self.port))
         self.ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ircsock.settimeout(5)
         
@@ -127,7 +128,7 @@ class IRC:
         'Private method that will check a response for PING'
         if response:
             if response.find("PING :") != -1:
-                print '[INFO] received: %s' % response
+                self.logger.debug('received: %s' % response)
                 self.__pong(response)
     
     def __checksocket(self):
@@ -139,7 +140,7 @@ class IRC:
     
     def __joinchannel(self):
         'Private method used to join a IRC channel'
-        print '[INFO] joining channel %s' % self.channel
+        self.logger.info('joining channel %s' % self.channel)
         self.ircsock.send("JOIN %s\n" % self.channel)
     
     def __pong(self, response):
@@ -155,14 +156,14 @@ class IRC:
         'Private method that checkes a response for Nick already in use'
         response = self.readsocket()
         if response.find("Nickname is already in use") != -1:
-            print '[INFO] Nick is already in use'
+            self.logger.warning('Nick is already in use')
             return False
         return True
     
     def __identify(self):
         '''Private method which sets USER and NICK, will then call
         __verify_identify to be sure not already in use'''
-        print '[INFO] setting nick to %s' % self.botnick
+        self.logger.info('setting nick to %s' % self.botnick)
         self.ircsock.send("USER %s %s %s :%s\n" % (self.botnick, self.botnick,
                                                    self.botnick, self.nickmsg))
         self.ircsock.send("NICK %s\n" % self.botnick)

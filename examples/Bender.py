@@ -1,15 +1,21 @@
 #!/usr/bin/env python
+#
+# This is an example script to demonstrate
+# how to use the BenderBot IRC class to construct
+# and custom IRC Bot.
+
 from multiprocessing import Process
 from time import sleep
 from BenderBot.IRC import IRC
 from BenderBot.Configuration import get_config
+from BenderBot.Logger import get_logger
 
 # imports for example Github process
 from urllib2 import urlopen
 from json import loads
 
-# read in our configuration for later use
 config = get_config()
+logger = get_logger(level='INFO')
 
 class Bender(Process):
     'Bender is a class that reads from the IRC socket'
@@ -24,11 +30,12 @@ class Github(Process):
     'A example Process for checking a Github repo using API'
     def run(self):
         while True:
-            print '[INFO] running Custom Github Process'
-            res = urlopen(config.get('Github', 'url')).read()
+            logger.info('running custom github process')
+            res = urlopen('https://api.github.com/repos/jness/BenderBot').read()
             repo = loads(res)
-            self.irc.sendchannel('%s last pushed @ %s' % (
-                                            repo['name'], repo['pushed_at']))
+            msg = '%s last pushed @ %s' % (repo['name'], repo['pushed_at'])
+            self.irc.sendchannel(msg)
+            logger.info('sent "%s" to channel' % msg)
             sleep(300)
 
 def main():

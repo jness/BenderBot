@@ -18,5 +18,5 @@ setup(name='BenderBot',
       zip_safe=False,
       install_requires=[],
       test_suite='nose.collector',
-      entry_points= {},
+      entry_points= {'console_scripts': ['Bender = BenderBot.Bender:main']},
       )
