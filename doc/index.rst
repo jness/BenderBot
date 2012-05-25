@@ -9,25 +9,48 @@ Welcome to BenderBot's documentation!
 BenderBot is A configurable bare bone IRC bot written in Python.
 
 We provide a number of useful IRC methods by means of a IRC class,
-wel also give examples of written a process driven IRC bot in ``examples/Bender.py``
+we also give examples of written a process driven IRC bot in ``examples/Bender.py``
 
-Running ``examples/Bender.py`` should output you results similar to the below,
-that is if you copied your configuration in place correctly::
+Out of the box BenderBot uses the configuration to run a installed Python
+module and return the results to the IRC channel.
 
-    $ python examples/Bender.py 
-    [INFO] connecting to irc.freenode.net:6667
-    [INFO] setting nick to BenderBot
-    [INFO] joining channel #bender-test
-    [INFO] running Custom Github Process
-    [INFO] received: PING :niven.freenode.net
-    [INFO] received: PING :niven.freenode.net
-    [INFO] running Custom Github Process
+In our example configuration we import ``datetime`` and run ``datetime.datetime.now().ctime()``
+every 30 seconds with in the **ExternalProcess** section::
+
+    $ cat config/bender.conf-example 
+    ....
+    [ExternalProcess]
+    # An external process in BenderBot for running a custom
+    # python function, the example below will use the datetime module
+    # to then run datetime.datetime.now().ctime() and send the
+    # results to the IRC channel every 30 seconds.
+    module = datetime
+    function = datetime.now().ctime()
+    interval = 30
+    
+With this configuration in place, and the BenderBot Python module being installed
+we can run the ``Bender`` command::
+
+    $ Bender 
+    2012-05-25 15:32:34,469 - INFO - connecting to irc.freenode.net:6667
+    2012-05-25 15:32:34,608 - INFO - setting nick to BenderBot
+    2012-05-25 15:32:44,609 - INFO - joining channel #bender-test
+    2012-05-25 15:32:44,625 - INFO - sent "Fri May 25 15:32:44 2012" to channel
+    2012-05-25 15:33:14,627 - INFO - sent "Fri May 25 15:33:14 2012" to channel
+    2012-05-25 15:33:44,628 - INFO - sent "Fri May 25 15:33:44 2012" to channel
+    2012-05-25 15:34:14,630 - INFO - sent "Fri May 25 15:34:14 2012" to channel
 
 And from an IRC client a user would see something like so::
 
-    16:43:49 *** BenderBot ~BenderBot@127.0.0.1 has joined #bender-test
-    16:43:50 < BenderBot> BenderBot last pushed @ 2012-05-24T20:57:58Z
-    16:48:50 < BenderBot> BenderBot last pushed @ 2012-05-24T21:47:48Z
+    15:32 -!- BenderBot [~BenderBot@127.0.0.1] has joined #bender-test
+    15:32 < BenderBot> Fri May 25 15:32:44 2012
+    15:33 < BenderBot> Fri May 25 15:33:14 2012
+    15:33 < BenderBot> Fri May 25 15:33:44 2012
+    15:34 < BenderBot> Fri May 25 15:34:14 2012
+    
+If you simply need a IRC Bot that runs a script every **X** seconds,
+all you need to do is make a python module and reference it in ``~/.bender.conf``.
+Or write you own using ``examples/Bender.py`` as a reference!
 
 Contents:
 
