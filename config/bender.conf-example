@@ -2,14 +2,33 @@
 server = irc.freenode.net
 port = 6667
 channel = #bender-test
-botnick = BenderBot
+botnick = python-benderbot
 nickmsg = Bite my shiny metal ass
+
+[IRCProcess]
+# The IRC process is responsible for reading from the network
+# socket, this mean the messages can be passed to a python function.
+#
+# The python function should take in a response message, and
+# return a response message.
+#
+# Below are some examples of IRC messages:
+#
+## channel message format:
+# :python-benderbot!~jeffrey@127.0.0.1 PRIVMSG #bender-test :hello Bender
+#
+## direct message format:
+# :nessy!~jeffrey@127.0.0.1 PRIVMSG python-benderbot :hey
+#
+library = examples.mrbender
+function = listen
 
 [ExternalProcess]
 # An external process in BenderBot for running a custom
 # python function, the example below will use the datetime module
 # to then run datetime.datetime.now().ctime() and send the
-# results to the IRC channel every 30 seconds.
+# results to the IRC channel every 60 seconds.
+#
 library = datetime
 function = datetime.now().ctime()
-interval = 30
+interval = 60

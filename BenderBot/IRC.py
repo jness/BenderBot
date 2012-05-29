@@ -61,13 +61,15 @@ class IRC:
                 
     def readsocket(self):
         '''The ``readsocket`` method will first validate a socket is
-        available by running ``__checksocket``, we will then retrieve
-        2048 bytes from the socket and strip newline feeds.
+        available by running ``__checksocket``, we will then create a
+        buffer and read one byte from the socket until we reach a \r\n.
+        This is in accordance to RFC1459:
+          http://tools.ietf.org/html/rfc1459#section-2.3
         
         Since we read from the buffer here we also need to check for
         **PING**, we do this with ``__checkping``.
         
-        The method will then return you the response from the IRC server,
+        The method will then return you the buffer,
         or None if the buffer was empty:
         
         - **method usage**::
@@ -77,15 +79,21 @@ class IRC:
         
         '''
         self.__checksocket()
-        try:
-            response = self.ircsock.recv(2048).strip('\n\r')
-            self.__checkping(response)
-            return response
-        except socket.error:
-            # empty buffer will return a socket.erroro
-            # if the socket is in fact dead the next __checksocket
-            # will capture it.
-            return None
+        buffer = ''
+        while True:
+            try:
+                response = self.ircsock.recv(1)
+            except socket.error:
+                # empty buffer will return a socket.error
+                # if the socket is in fact dead the next __checksocket
+                # will capture it.
+                return None
+                
+            buffer += response
+            if buffer.find('\r\n') != -1:
+                res = buffer.strip('\r\n')
+                self.__checkping(res)
+                return res
     
     def quit(self):
         '''the ``quit`` method will close the current socket
@@ -107,6 +115,7 @@ class IRC:
             55
         '''
         self.__checksocket()
+        self.logger.info('sending: PRIVMSG %s :%s' % (self.channel, msg))
         response = self.ircsock.send("PRIVMSG %s :%s\n" % (self.channel, msg))
         return response
 
@@ -121,6 +130,7 @@ class IRC:
             48
         '''
         self.__checksocket()
+        self.logger.info('sending: PRIVMSG %s :%s' % (nick, msg))
         response = self.ircsock.send("PRIVMSG %s :%s\n" % (nick, msg))
         return response
     
@@ -147,6 +157,7 @@ class IRC:
         'Private method that will send PONG to requesting service'
         m = match('PING (.*)', response)
         if match:
+            self.logger.debug('sending: PONG %s' % m.group(1))
             pong = self.ircsock.send("PONG %s\r\n" % m.group(1))
             return pong
         else:
