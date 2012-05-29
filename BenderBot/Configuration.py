@@ -6,10 +6,15 @@ def get_config():
     configuration file.
     
     To get started copy the ``config/bender.conf-example`` to
-    ``~/.bender.conf``::
-        
-        cp config/bender.conf-example ~/.bender.conf
+    ``~/.bender.conf``
     
+    - **method usage**::
+    
+        >>> from BenderBot.Configuration import get_config
+        >>> config = get_config()
+        >>> config.get('IRC', 'server')
+        'irc.freenode.net'
+        
     '''
     cfg_name = '~/.bender.conf'
     cfg = os.path.expanduser(cfg_name)

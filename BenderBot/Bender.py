@@ -4,88 +4,12 @@ from BenderBot.IRC import IRC
 
 from ConfigParser import NoOptionError, NoSectionError
 from multiprocessing import Process
-from time import sleep
 from importlib import import_module
 import argparse
 
-class IRCProcess(Process):
-    '''IRC process responsible for reading from the IRC socket
-    and handling PING/PONG'''
-    def run(self):
-        
-        try:
-            mylib = config.get('IRCProcess', 'library')
-            myfunction = config.get('IRCProcess', 'function')
-            
-        except NoOptionError as e:
-            logger.warning('IRCProcess missing library or function options')
-            mylib = None
-            myfunction = None
-        
-        except NoSectionError as e:
-            logger.warning('missing IRCProcess section')
-            mylib = None
-            myfunction = None
-        
-        if mylib:
-            logger.debug('importig python module "%s"' % mylib)
-            lib = import_module(mylib)
-        
-        while True:
-            response =  self.irc.readsocket()
-            
-            # if we have a custom IRCProcess it will run here
-            if mylib and myfunction and response:
-                func = getattr(lib, myfunction)
-                msg = func(response)
-                if msg:
-                    self.irc.sendchannel(msg)
-                
-            sleep(0.05) # Slow down the loop just a bit to avoid CPU melt ;)
-        
-class ExternalProcess(Process):
-    '''External Process to handle non IRC processes and respond
-    to a channel'''
-    def run(self):
-        
-        try:
-            mylib = config.get('ExternalProcess', 'library')
-            myfunction = config.get('ExternalProcess', 'function')
-            myintreval = config.get('ExternalProcess', 'interval')
-            
-        except NoOptionError as e:
-            logger.warning(
-               'ExternalProcess missing library, function, or intreval options')
-            logger.warning('killing ExternalProcess')
-            return 1
-        
-        except NoSectionError as e:
-            logger.warning('missing ExternalProcess section')
-            logger.warning('killing ExternalProcess')
-            return 1
-            
-        logger.debug('importig python module "%s"' % mylib)
-        lib = import_module(mylib)
-        
-        while True:
-            logger.debug('running function "%s from %s"' % (myfunction, mylib))
-            func = getattr(lib, myfunction)
-            results = func()
-            
-            # if we have restuls lets see what to do about it
-            if results:
-                if type(results) == list:
-                    for r in results:
-                        self.irc.sendchannel('%s' % r)
-                elif type(results) == str:
-                    self.irc.sendchannel('%s' % results)
-                else:
-                    logger.warning('result unknown type: %s' % type(results))
-            sleep(int(myintreval))
-
 def main():
-    '''This is an example script which shows how to use BenderBot,
-    and interact with its classes'''
+    '''This is the main BenderBot script, it ties all the pieces
+    together and runs our active bot'''
 
     # process args for debug
     parser = argparse.ArgumentParser()
@@ -105,16 +29,30 @@ def main():
     # call our IRC core class to handle everything IRC
     irc = IRC(logger=logger)
     irc.connect()
+    
+    # find all of our processes
+    sections = [p for p in config.sections() if 'Process' in p]
+    for section in sections:
+        try:
+            lib_name = config.get(section, 'library')
+            class_name = config.get(section, 'class')
+        except NoOptionError:
+            logger.error('Missing library or class option in %s' % section)
+            raise
+        
+        # link to our class
+        library = import_module(lib_name)
+        class_path = getattr(library, class_name)
+        myclass = class_path()
+        
+        # provide useful object to our class
+        myclass.irc = irc
+        myclass.config = config
+        myclass.logger = logger
+        
+        # finally start the process
+        logger.info('Starting process %s' % section)
+        myclass.start()
 
-    # start our Bender Process
-    irc_process = IRCProcess()
-    irc_process.irc = irc
-    irc_process.start()
-    
-    # start our Example Process
-    ex_process = ExternalProcess()
-    ex_process.irc = irc
-    ex_process.start()
-    
 if __name__ == '__main__':
     main()

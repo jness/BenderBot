@@ -8,77 +8,57 @@ Welcome to BenderBot's documentation!
 
 BenderBot is A configurable bare bone IRC bot written in Python.
 
-The software is Open Source using the GPLv3 License and can be
-downloaded from https://github.com/jness/BenderBot
+The software is Open Source and licensed under GPLv3. The source
+can be viewed and downloaded from https://github.com/jness/BenderBot
 
-We provide a number of useful IRC methods by means of a IRC class,
+We provide a number of useful IRC methods by means of the ``BenderBot.IRC`` class,
 we also give examples of written a process driven IRC bot in ``examples/Bender.py``
+if the current structure does not suite your needs.
 
-Out of the box BenderBot uses the configuration to run a installed Python
-module and return the results to the IRC channel. We can also write
-a custom python library to read in a IRC message, and return a message.
+BenderBot uses the configuration to connect to your IRC server, and run processes.
+The processes are defined in a section within the configuration containing the word `
+`Process``. These processes should be subclassed from the
+``BenderBot.BenderProcess.BenderProcess`` class.
 
-In our example configuration we import ``os`` and run ``getcwd``
-every 60 seconds with in the **ExternalProcess** section.
-
-We also import the example library ``examples.mrbender`` and run ``listen``
-in our **IRCProcess** loop::
+Out of the box BenderBot uses the example BenderProcess to keep the bot alive,
+this is thanks to ``BenderBot.IRC.readsocket`` and its ablity to PING/PONG::
 
     $ cat config/bender.conf-example 
     ....
     [IRCProcess]
-    # The IRC process is responsible for reading from the network
-    # socket, this mean the messages can be passed to a python function.
+    # Create a new process from our BenderProcess class,
+    # this can easily be subclassed to do your bidding,
+    # just be sure to have one process for handling IRC
+    # socket reads, this keeps up PING/PONG.
+    # The BenderProcess class gives an example how to handle
+    # IRC readsocket (PING/PONG).
     #
-    # The python function should take in a response message, and
-    # return a response message.
-    #
-    # Below are some examples of IRC messages:
-    #
-    ## channel message format:
-    # :python-benderbot!~jeffrey@127.0.0.1 PRIVMSG #bender-test :hello Bender
-    #
-    ## direct message format:
-    # :nessy!~jeffrey@127.0.0.1 PRIVMSG python-benderbot :hey
-    #
-    library = examples.mrbender
-    function = listen
-    
-    [ExternalProcess]
-    # An external process in BenderBot for running a custom
-    # python function, the example below will use the os module
-    # to then run getcwd() and send the
-    # results to the IRC channel every 60 seconds.
-    library = os
-    function = getcwd
-    interval = 60
+    library = BenderBot.BenderProcess
+    class = BenderProcess
     
 With this configuration in place, and the BenderBot Python module being installed
 we can run the ``Bender`` command::
 
-    $ Bender 
-    2012-05-29 12:26:29,066 - INFO - connecting to irc.freenode.net:6667
-    2012-05-29 12:26:29,204 - INFO - setting nick to python-benderbot
-    2012-05-29 12:26:39,205 - INFO - joining channel #bender-test
-    2012-05-29 12:26:39,216 - INFO - sending: PRIVMSG #bender-test :/Users/jeffreyness/Python/BenderBot
-    2012-05-29 12:27:16,799 - INFO - sending: PRIVMSG #bender-test :Hello meatbag!
-
-And from an IRC client a user would see something like so::
-
-    12:26 -!- python-benderbot [~python-be@127.0.0.1] has joined #bender-test
-    12:26 < python-benderbot> /Users/jeffreyness/Python/BenderBot
-    12:27 < nessy> hi bender
-    12:27 < python-benderbot> Hello meatbag!
+    $ Bender --debug
+    2012-05-29 17:42:45,608 - INFO - connecting to irc.freenode.net:6667
+    2012-05-29 17:42:45,771 - INFO - setting nick to python-benderbot
+    2012-05-29 17:42:55,772 - INFO - joining channel #bender-test
+    2012-05-29 17:42:55,773 - INFO - Starting process Process1
+    2012-05-29 17:45:03,073 - DEBUG - received: PING :lindbohm.freenode.net
+    2012-05-29 17:45:03,075 - DEBUG - sending: PONG :lindbohm.freenode.net
     
-Or write you own using ``examples/Bender.py`` as a reference!
+At the moment nothing to fancy, but that is where you come in, make Bender
+do your bidding!
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
    
-   IRC
+   Bender
+   BenderProcess
    Configuration
+   IRC
    Logger
 
 

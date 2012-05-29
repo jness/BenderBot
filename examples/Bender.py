@@ -24,7 +24,7 @@ class Bender(Process):
         data from the IRC server, we can handle IRC task here'''
         while True:
             response =  self.irc.readsocket()
-            sleep(1)
+            sleep(0.02)
             
 class Github(Process):
     'A example Process for checking a Github repo using API'

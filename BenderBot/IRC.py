@@ -62,9 +62,9 @@ class IRC:
     def readsocket(self):
         '''The ``readsocket`` method will first validate a socket is
         available by running ``__checksocket``, we will then create a
-        buffer and read one byte from the socket until we reach a \r\n.
+        buffer and read one byte from the socket until we reach a CRLF.
         This is in accordance to RFC1459:
-          http://tools.ietf.org/html/rfc1459#section-2.3
+        http://tools.ietf.org/html/rfc1459#section-2.3
         
         Since we read from the buffer here we also need to check for
         **PING**, we do this with ``__checkping``.

@@ -6,29 +6,12 @@ botnick = python-benderbot
 nickmsg = Bite my shiny metal ass
 
 [IRCProcess]
-# The IRC process is responsible for reading from the network
-# socket, this mean the messages can be passed to a python function.
+# Create a new process from our BenderProcess class,
+# this can easily be subclassed to do your bidding,
+# just be sure to have one process for handling IRC
+# socket reads, this keeps up PING/PONG.
+# The BenderProcess class gives an example how to handle
+# IRC readsocket (PING/PONG).
 #
-# The python function should take in a response message, and
-# return a response message.
-#
-# Below are some examples of IRC messages:
-#
-## channel message format:
-# :python-benderbot!~jeffrey@127.0.0.1 PRIVMSG #bender-test :hello Bender
-#
-## direct message format:
-# :nessy!~jeffrey@127.0.0.1 PRIVMSG python-benderbot :hey
-#
-library = examples.mrbender
-function = listen
-
-[ExternalProcess]
-# An external process in BenderBot for running a custom
-# python function, the example below will use the os module
-# to then run getcwd() and send the
-# results to the IRC channel every 60 seconds.
-#
-library = os
-function = getcwd
-interval = 60
+library = BenderBot.BenderProcess
+class = BenderProcess
