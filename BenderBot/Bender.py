@@ -86,7 +86,6 @@ def main():
                         default=False, help='Turn on verbose debugging')
     args = parser.parse_args()
 
-
     global config, logger    
     config = get_config()
     
