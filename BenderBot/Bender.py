@@ -6,6 +6,7 @@ from ConfigParser import NoOptionError, NoSectionError
 from multiprocessing import Process
 from time import sleep
 from importlib import import_module
+import argparse
 
 class IRCProcess(Process):
     '''IRC process responsible for reading from the IRC socket
@@ -79,9 +80,21 @@ def main():
     '''This is an example script which shows how to use BenderBot,
     and interact with its classes'''
 
+    # process args for debug
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--debug', action="store_true", dest="debug",
+                        default=False, help='Turn on verbose debugging')
+    args = parser.parse_args()
+
+
     global config, logger    
     config = get_config()
-    logger = get_logger(level='INFO')
+    
+    # set logging level based on argparse
+    if args.debug:
+        logger = get_logger(level='DEBUG')
+    else:
+        logger = get_logger(level='INFO')
     
     # call our IRC core class to handle everything IRC
     irc = IRC(logger=logger)
