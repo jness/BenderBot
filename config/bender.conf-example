@@ -25,10 +25,10 @@ function = listen
 
 [ExternalProcess]
 # An external process in BenderBot for running a custom
-# python function, the example below will use the datetime module
-# to then run datetime.datetime.now().ctime() and send the
+# python function, the example below will use the os module
+# to then run getcwd() and send the
 # results to the IRC channel every 60 seconds.
 #
-library = datetime
-function = datetime.now().ctime()
+library = os
+function = getcwd
 interval = 60

@@ -63,7 +63,8 @@ class ExternalProcess(Process):
         
         while True:
             logger.debug('running function "%s from %s"' % (myfunction, mylib))
-            results = eval('lib.%s' % myfunction)
+            func = getattr(lib, myfunction)
+            results = func()
             
             if results:
                 self.irc.sendchannel('%s' % results)
