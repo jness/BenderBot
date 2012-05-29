@@ -7,9 +7,6 @@ from multiprocessing import Process
 from time import sleep
 from importlib import import_module
 
-config = get_config()
-logger = get_logger(level='DEBUG')
-
 class IRCProcess(Process):
     '''IRC process responsible for reading from the IRC socket
     and handling PING/PONG'''
