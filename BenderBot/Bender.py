@@ -17,10 +17,14 @@ class IRCProcess(Process):
             myfunction = config.get('IRCProcess', 'function')
             
         except NoOptionError as e:
-            logger.warning('missing library or function options')
+            logger.warning('IRCProcess missing library or function options')
+            mylib = None
+            myfunction = None
         
         except NoSectionError as e:
             logger.warning('missing IRCProcess section')
+            mylib = None
+            myfunction = None
         
         if mylib:
             logger.debug('importig python module "%s"' % mylib)
@@ -49,7 +53,8 @@ class ExternalProcess(Process):
             myintreval = config.get('ExternalProcess', 'interval')
             
         except NoOptionError as e:
-            logger.warning('missing library, function, or intreval options')
+            logger.warning(
+               'ExternalProcess missing library, function, or intreval options')
             logger.warning('killing ExternalProcess')
             return 1
         
