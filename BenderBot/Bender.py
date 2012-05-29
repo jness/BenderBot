@@ -72,8 +72,15 @@ class ExternalProcess(Process):
             func = getattr(lib, myfunction)
             results = func()
             
+            # if we have restuls lets see what to do about it
             if results:
-                self.irc.sendchannel('%s' % results)
+                if type(results) == list:
+                    for r in results:
+                        self.irc.sendchannel('%s' % r)
+                elif type(results) == str:
+                    self.irc.sendchannel('%s' % results)
+                else:
+                    logger.warning('result unknown type: %s' % type(results))
             sleep(int(myintreval))
 
 def main():
