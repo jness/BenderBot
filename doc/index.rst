@@ -59,6 +59,7 @@ Contents:
    
    IRC
    Configuration
+   Logger
 
 
 
