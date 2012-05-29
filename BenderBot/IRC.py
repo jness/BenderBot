@@ -99,7 +99,7 @@ class IRC:
     def sendchannel(self, msg):
         '''the ``sendchannel`` method sends a message to the current
         joined channel defined by ``self.channel``. Before we send a message
-        we first confirm the socket is available with ``__checksocket()
+        we first confirm the socket is available with ``__checksocket()``
         
         - **method usage**
         
@@ -113,7 +113,7 @@ class IRC:
     def sendnick(self, nick, msg):
         '''the ``sendnick`` method sends a message to a specific user nick.
         Before we send a message we first confirm the socket is available
-        with ``__checksocket()
+        with ``__checksocket()``
         
         - **method usage**
         
