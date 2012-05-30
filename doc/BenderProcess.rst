@@ -32,7 +32,7 @@
         2012-05-29 17:54:41,052 - INFO - connecting to irc.freenode.net:6667
         2012-05-29 17:54:41,194 - INFO - setting nick to python-benderbot
         2012-05-29 17:54:51,195 - INFO - joining channel #bender-test
-        2012-05-29 17:54:51,195 - INFO - Starting process Process1
+        2012-05-29 17:54:51,195 - INFO - Starting process IRCProcess
         2012-05-29 17:54:51,204 - INFO - Starting process Process2
         2012-05-29 17:54:51,208 - INFO - sending: PRIVMSG #bender-test :1338332091.21
         2012-05-29 17:55:01,210 - INFO - sending: PRIVMSG #bender-test :1338332101.21
