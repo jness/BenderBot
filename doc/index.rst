@@ -16,8 +16,8 @@ we also give examples of written a process driven IRC bot in ``examples/Bender.p
 if the current structure does not suite your needs.
 
 BenderBot uses the configuration to connect to your IRC server, and run processes.
-The processes are defined in a section within the configuration containing the word `
-`Process``. These processes should be subclassed from the
+The processes are defined in a section within the configuration containing the word
+**Process**. These processes should be subclassed from the
 ``BenderBot.BenderProcess.BenderProcess`` class.
 
 Out of the box BenderBot uses the example BenderProcess to keep the bot alive,
