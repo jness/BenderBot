@@ -5,6 +5,7 @@ from BenderBot.IRC import IRC
 from ConfigParser import NoOptionError, NoSectionError
 from multiprocessing import Process
 from importlib import import_module
+from time import sleep
 import argparse
 
 def main():
@@ -31,6 +32,8 @@ def main():
     irc.connect()
     
     # find all of our processes
+    important_processes = []
+    processes = []
     sections = [p for p in config.sections() if 'Process' in p]
     for section in sections:
         try:
@@ -53,6 +56,24 @@ def main():
         # finally start the process
         logger.info('Starting process %s' % section)
         myclass.start()
-
+       
+        # see if this process is important and needs to be watched
+        processes.append(myclass)
+        try:
+            important = config.get(section, 'important')
+        except NoOptionError:
+            important = False   
+        if important:
+            important_processes.append(myclass)
+    
+    # a loop to watch our import processes
+    while True:
+        for p in important_processes:
+            if not p.is_alive():
+                for process in processes:
+                    process.terminate()
+                raise Exception('One of your important processes died')
+            sleep(5)
+        
 if __name__ == '__main__':
     main()

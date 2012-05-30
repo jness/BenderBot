@@ -15,3 +15,5 @@ nickmsg = Bite my shiny metal ass
 #
 library = BenderBot.BenderProcess
 class = BenderProcess
+# If a important process dies the entire bot will die
+important = True
