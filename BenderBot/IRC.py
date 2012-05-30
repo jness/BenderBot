@@ -92,6 +92,7 @@ class IRC:
             buffer += response
             if buffer.find('\r\n') != -1:
                 res = buffer.strip('\r\n')
+                self.logger.debug(res)
                 self.__checkping(res)
                 return res
     
