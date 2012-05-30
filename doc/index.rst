@@ -17,8 +17,14 @@ if the current structure does not suite your needs.
 
 BenderBot uses the configuration to connect to your IRC server, and run processes.
 The processes are defined in a section within the configuration containing the word
-**Process**. These processes should be subclassed from the
-``BenderBot.BenderProcess.BenderProcess`` class.
+**Process**.
+
+These process modules work very much like a **plugin** and should be subclassed from the
+``BenderBot.BenderProcess.BenderProcess`` class. Currently the following plugins
+have already been written and are available for download:
+
+  **Launchpad Project Bug Monitor Plugin** | https://github.com/jness/BenderBot_LaunchpadMonitor 
+
 
 Out of the box BenderBot uses the example BenderProcess to keep the bot alive,
 this is thanks to ``BenderBot.IRC.readsocket`` and its ablity to PING/PONG::
@@ -47,8 +53,8 @@ we can run the ``Bender`` command::
     2012-05-29 17:45:03,073 - DEBUG - received: PING :lindbohm.freenode.net
     2012-05-29 17:45:03,075 - DEBUG - sending: PONG :lindbohm.freenode.net
     
-At the moment nothing to fancy, but that is where you come in, make Bender
-do your bidding!
+At the moment nothing to fancy, this is where you come in, make Bender
+do your bidding with your own plugins, or use already written plugins!
 
 Contents:
 
