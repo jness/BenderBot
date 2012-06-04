@@ -2,7 +2,7 @@
 server = irc.freenode.net
 port = 6667
 channel = #bender-test
-botnick = python-benderbot
+botnick = benderbot
 nickmsg = Bite my shiny metal ass
 
 [IRCProcess]

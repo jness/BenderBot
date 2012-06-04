@@ -166,8 +166,16 @@ class IRC:
     
     def __verify_identify(self):
         'Private method that checkes a response for Nick already in use'
-        response = self.readsocket()
-        if response.find("Nickname is already in use") != -1:
+        # get entire buffer before we join a channel
+        res = ''
+        while True:
+            response = self.readsocket()
+            if response:
+                res += response
+            else:
+                break
+            
+        if res.find("Nickname is already in use") != -1:
             self.logger.warning('Nick is already in use')
             return False
         return True
