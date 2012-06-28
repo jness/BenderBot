@@ -19,6 +19,7 @@ class IRC:
         self.botnick = kwargs.get('botnick',"BenderBot")
         self.nickmsg = kwargs.get('nickmsg', 'Bite my shiny metal ass')
         self.logger = kwargs.get('logger', get_logger())
+        self.wait = kwargs.get('wait', '10')
         
     def connect(self):
         ''' The ``connect`` method performs a couple of key actions.
@@ -187,5 +188,5 @@ class IRC:
         self.ircsock.send("USER %s %s %s :%s\n" % (self.botnick, self.botnick,
                                                    self.botnick, self.nickmsg))
         self.ircsock.send("NICK %s\n" % self.botnick)
-        sleep(10) # Allow the server sometime to respond
+        sleep(int(self.wait)) # Allow the server sometime to respond
         return self.__verify_identify()
