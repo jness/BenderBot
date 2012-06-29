@@ -1,6 +1,7 @@
 from BenderBot.Configuration import get_config
 from BenderBot.Logger import get_logger
 from BenderBot.IRC import IRC
+from BenderBot.IRCProcess import IRCProcess
 
 from ConfigParser import NoOptionError, NoSectionError
 from multiprocessing import Process
@@ -18,7 +19,7 @@ def main():
                         default=False, help='Turn on verbose debugging')
     args = parser.parse_args()
 
-    global config, logger    
+    global config, logger
     config = get_config()
     
     # set logging level based on argparse
@@ -26,7 +27,7 @@ def main():
         logger = get_logger(level='DEBUG')
     else:
         logger = get_logger(level='INFO')
-    
+        
     # call our IRC core class to handle everything IRC
     irc = IRC(logger=logger)
     irc.connect()
@@ -35,6 +36,19 @@ def main():
     important_processes = []
     processes = []
     sections = [p for p in config.sections() if 'Process' in p]
+    
+    # start the IRC root process that handles PING/PONG
+    irc_process = IRCProcess()
+    irc_process.irc = irc
+    
+    # start the root process
+    logger.info('Starting root IRC process')
+    irc_process.start()
+    
+    # add root process to listing
+    processes.append(irc_process)
+    important_processes.append(irc_process)
+    
     for section in sections:
         try:
             lib_name = config.get(section, 'library')
@@ -52,6 +66,7 @@ def main():
         myclass.irc = irc
         myclass.config = config
         myclass.logger = logger
+        myclass.irc_process = irc_process
         
         # finally start the process
         logger.info('Starting process %s' % section)
@@ -65,7 +80,7 @@ def main():
             important = False   
         if important:
             important_processes.append(myclass)
-    
+            
     # a loop to watch our import processes
     while True:
         for p in important_processes:

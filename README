@@ -5,5 +5,17 @@ Documentation: http://flip-edesign.com/BenderBot/
 
 Author: Jeffrey Ness
 License: GPLv3
-Version: 0.3
+Version: 0.4
 
+
+Changes:
+-------------------------------------------------------
+0.4  Making IRCProcess a default process for handling
+     IRC communications and PING/PONG.
+     
+     To access the IRC communication stream just
+     call self.irc_process.output.recv() in your
+     process.
+
+0.3  Adding HTTPListener API, this API allows
+     sending HTTP POST containing JSON to BenderBot.
