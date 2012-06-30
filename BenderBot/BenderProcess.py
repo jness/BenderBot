@@ -11,9 +11,6 @@ class BenderProcess(Process):
         while True:
             # Example on how to read from the IRC Process socket
             # and get IRC communication from server
-            msg = self.irc_process.output.recv()
+            msg = self.irc_process.queue.get()
             
-            # it is very important to keep your sleep time in line
-            # with the IRC Process sleep time, by default this is 0.02
-            # seconds
             sleep(0.02) # Slow down the loop just a bit to avoid CPU melt ;)

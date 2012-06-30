@@ -10,6 +10,11 @@ Version: 0.4
 
 Changes:
 -------------------------------------------------------
+0.5  Use Multiprocess Queue class rather than Pipe
+     to handle IRC communication To access the queue
+     run self.irc_process.queue.get(), the get() method
+     will return the message and remove it from the Queue.
+
 0.4  Making IRCProcess a default process for handling
      IRC communications and PING/PONG.
      

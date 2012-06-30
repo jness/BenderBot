@@ -1,4 +1,4 @@
-from multiprocessing import Process, Pipe
+from multiprocessing import Process, Queue
 from time import sleep
 
 class IRCProcess(Process):
@@ -10,7 +10,7 @@ class IRCProcess(Process):
     '''
     
     def __init__(self):
-        self.input, self.output = Pipe()
+        self.queue = Queue()
         super(IRCProcess, self).__init__()
     
     def run(self):
@@ -18,9 +18,10 @@ class IRCProcess(Process):
             # readsocket performs PING/PONG so we are effectively
             # keeping the connection alive here.
             #
-            # We also use Pipe to send the message,
-            # your processes can read from this Pipe if they
-            # need to listen for IRC messages
+            # We also use Queue to append messages.
+            # Your process can read from this Queue if they
+            # need to listen for IRC messages, to do
+            # use self.irc_process.queue.get()
             #
-            self.input.send(self.irc.readsocket())
+            self.queue.put(self.irc.readsocket())
             sleep(0.02) # Slow down the loop just a bit to avoid CPU melt ;)
