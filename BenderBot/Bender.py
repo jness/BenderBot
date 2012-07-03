@@ -4,7 +4,7 @@ from BenderBot.IRC import IRC
 from BenderBot.IRCProcess import IRCProcess
 
 from ConfigParser import NoOptionError, NoSectionError
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 from importlib import import_module
 from time import sleep
 import argparse
@@ -28,9 +28,13 @@ def main():
     else:
         logger = get_logger(level='INFO')
         
+    # create a Queue to hold all IRC messages
+    queue = Queue()
+        
     # call our IRC core class to handle everything IRC
-    irc = IRC(logger=logger)
+    irc = IRC(logger=logger, queue=queue)
     irc.connect()
+    #irc.queue = queue
     
     # find all of our processes
     important_processes = []
@@ -38,7 +42,7 @@ def main():
     sections = [p for p in config.sections() if 'Process' in p]
     
     # start the IRC root process that handles PING/PONG
-    irc_process = IRCProcess()
+    irc_process = IRCProcess(queue=queue)
     irc_process.irc = irc
     
     # start the root process

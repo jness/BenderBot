@@ -9,8 +9,8 @@ class IRCProcess(Process):
     sure your sleep is inline with IRCProcess.
     '''
     
-    def __init__(self):
-        self.queue = Queue()
+    def __init__(self, **kwargs):
+        self.queue = kwargs.pop('queue')
         super(IRCProcess, self).__init__()
     
     def run(self):
