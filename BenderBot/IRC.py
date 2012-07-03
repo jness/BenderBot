@@ -20,7 +20,7 @@ class IRC:
         self.nickmsg = kwargs.get('nickmsg', 'Bite my shiny metal ass')
         self.logger = kwargs.get('logger', get_logger())
         self.wait = kwargs.get('wait', '10')
-        self.queue = kwargs.get('queue')
+        self.queue = kwargs.get('queue', None)
         
     def connect(self):
         ''' The ``connect`` method performs a couple of key actions.
@@ -120,8 +120,11 @@ class IRC:
         self.__checksocket()
         self.logger.info('sending: PRIVMSG %s :%s' % (self.channel, msg))
         response = self.ircsock.send("PRIVMSG %s :%s\n" % (self.channel, msg))
-        self.queue.put(':%s!@%s PRIVMSG %s :%s' % (self.botnick, self.botnick,
-                                                   self.channel, msg))
+        if self.queue:
+            self.queue.put(':%s!@%s PRIVMSG %s :%s' % (self.botnick,
+                                                       self.botnick,
+                                                       self.channel,
+                                                       msg))
         return response
 
     def sendnick(self, nick, msg):
