@@ -23,5 +23,7 @@ class IRCProcess(Process):
             # need to listen for IRC messages, to do
             # use self.irc_process.queue.get()
             #
-            self.queue.put(self.irc.readsocket())
+            msg = self.irc.readsocket()
+            if msg:
+                self.queue.put(msg)
             sleep(0.02) # Slow down the loop just a bit to avoid CPU melt ;)
