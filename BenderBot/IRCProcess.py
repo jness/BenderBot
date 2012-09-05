@@ -11,6 +11,7 @@ class IRCProcess(Process):
     
     def __init__(self, **kwargs):
         self.queue = kwargs.pop('queue')
+        self.logger = kwargs.pop('logger')
         super(IRCProcess, self).__init__()
     
     def run(self):
@@ -25,5 +26,6 @@ class IRCProcess(Process):
             #
             msg = self.irc.readsocket()
             if msg:
+                self.logger.debug("Adding Message to Queue: %s" % msg)
                 self.queue.put(msg)
             sleep(0.02) # Slow down the loop just a bit to avoid CPU melt ;)

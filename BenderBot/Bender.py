@@ -42,7 +42,7 @@ def main():
     sections = [p for p in config.sections() if 'Process' in p]
     
     # start the IRC root process that handles PING/PONG
-    irc_process = IRCProcess(queue=queue)
+    irc_process = IRCProcess(queue=queue, logger=logger)
     irc_process.irc = irc
     
     # start the root process
