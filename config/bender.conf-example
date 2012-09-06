@@ -9,19 +9,6 @@ nickmsg = Bite my shiny metal ass
 # on connection before they can join the channel.
 wait = 10
 
-[IRCProcess]
-# Create a new process from our BenderProcess class,
-# this can easily be subclassed to do your bidding,
-# just be sure to have one process for handling IRC
-# socket reads, this keeps up PING/PONG.
-# The BenderProcess class gives an example how to handle
-# IRC readsocket (PING/PONG).
-#
-library = BenderBot.BenderProcess
-class = BenderProcess
-# If a important process dies the entire bot will die
-important = True
-
 [HTTPListenerProcess]
 library = BenderBot.HTTPListener
 class = Listener
