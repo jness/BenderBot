@@ -85,10 +85,9 @@ class IRC:
         while True:
             try:
                 response = self.ircsock.recv(1)
+                if response == '':
+                    raise Exception('Socket disconnected')
             except socket.error:
-                # empty buffer will return a socket.error
-                # if the socket is in fact dead the next __checksocket
-                # will capture it.
                 return None
                 
             buffer += response

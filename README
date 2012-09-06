@@ -5,11 +5,16 @@ Documentation: http://flip-edesign.com/BenderBot/
 
 Author: Jeffrey Ness
 License: GPLv3
-Version: 0.5
+Version: 0.6
 
 
 Changes:
 -------------------------------------------------------
+0.6  Using a Dispatcher to handle all Processes.
+     Processes can now take the "listen" config option,
+     this gives them there own "queue" attribute to read
+     IRC messages.
+
 0.5  Use Multiprocess Queue class rather than Pipe
      to handle IRC communication To access the queue
      run self.irc_process.queue.get(), the get() method

@@ -2,10 +2,10 @@ from BenderBot.Configuration import get_config
 from BenderBot.Logger import get_logger
 from BenderBot.IRC import IRC
 from BenderBot.IRCProcess import IRCProcess
+from BenderBot.Dispatcher import Dispatcher
 
 from ConfigParser import NoOptionError, NoSectionError
-from multiprocessing import Process, Queue
-from importlib import import_module
+from multiprocessing import Queue
 from time import sleep
 import argparse
 
@@ -31,68 +31,27 @@ def main():
     # create a Queue to hold all IRC messages
     queue = Queue()
         
-    # call our IRC core class to handle everything IRC
-    irc = IRC(logger=logger, queue=queue)
-    irc.connect()
-    #irc.queue = queue
-    
-    # find all of our processes
-    important_processes = []
-    processes = []
-    sections = [p for p in config.sections() if 'Process' in p]
-    
-    # start the IRC root process that handles PING/PONG
-    irc_process = IRCProcess(queue=queue, logger=logger)
-    irc_process.irc = irc
-    
-    # start the root process
-    logger.info('Starting root IRC process')
+    # Start the IRC root process that handles PING/PONG,
+    logger.info('Starting IRCProcess')
+    irc_process = IRCProcess(queue=queue, logger=logger, config=config)
     irc_process.start()
     
-    # add root process to listing
-    processes.append(irc_process)
-    important_processes.append(irc_process)
+    # Start our Dispatcher
+    logger.info('Starting Dispatcher')
+    dispatcher = Dispatcher(logger=logger, config=config)
+    dispatcher.irc = irc_process.get_irc()
+    dispatcher.queue = queue
+    dispatcher.start()
     
-    for section in sections:
-        try:
-            lib_name = config.get(section, 'library')
-            class_name = config.get(section, 'class')
-        except NoOptionError:
-            logger.error('Missing library or class option in %s' % section)
-            raise
-        
-        # link to our class
-        library = import_module(lib_name)
-        class_path = getattr(library, class_name)
-        myclass = class_path()
-        
-        # provide useful object to our class
-        myclass.irc = irc
-        myclass.config = config
-        myclass.logger = logger
-        myclass.irc_process = irc_process
-        
-        # finally start the process
-        logger.info('Starting process %s' % section)
-        myclass.start()
-       
-        # see if this process is important and needs to be watched
-        processes.append(myclass)
-        try:
-            important = config.get(section, 'important')
-        except NoOptionError:
-            important = False   
-        if important:
-            important_processes.append(myclass)
-            
-    # a loop to watch our import processes
+    # loop to watch our irc_process
     while True:
-        for p in important_processes:
-            if not p.is_alive():
-                for process in processes:
-                    process.terminate()
-                raise Exception('One of your important processes died')
-            sleep(5)
+        if not irc_process.is_alive():
+            dispatcher.terminate()
+            raise Exception('IRCProcess died...')
+        if not dispatcher.is_alive():
+            irc_process.terminate()
+            raise Exception('Dispatcher died...')
+        sleep(5)
         
 if __name__ == '__main__':
     main()

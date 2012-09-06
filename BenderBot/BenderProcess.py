@@ -9,12 +9,4 @@ class BenderProcess(Process):
     
     def run(self):
         while True:
-            # Example on how to read from the IRC Process socket
-            # and get IRC communication from server.
-            #
-            # Since the queue.get removes the item from the queue
-            # only once process should read from the queue.
-            #
-            # msg = self.irc_process.queue.get()
-            #
             sleep(0.02) # Slow down the loop just a bit to avoid CPU melt ;)
