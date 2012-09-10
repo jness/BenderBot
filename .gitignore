@@ -7,3 +7,4 @@ config/bot.conf
 doc/_*
 .DS_Store
 subclass
+.coverage

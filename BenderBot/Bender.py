@@ -8,10 +8,19 @@ from ConfigParser import NoOptionError, NoSectionError
 from multiprocessing import Queue
 from time import sleep
 import argparse
+import sys
+import signal
+
+def quit(signal, frame):
+    'Capture SIGINT ctrl+c'
+    sys.exit(0)
 
 def main():
     '''This is the main BenderBot script, it ties all the pieces
     together and runs our active bot'''
+    
+    # handle CTRL+C nicely
+    signal.signal(signal.SIGINT, quit)
 
     # process args for debug
     parser = argparse.ArgumentParser()

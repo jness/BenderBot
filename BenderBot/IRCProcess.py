@@ -1,3 +1,4 @@
+from BenderBot.Configuration import get_config
 from multiprocessing import Process, Queue
 from BenderBot.IRC import IRC
 from time import sleep
@@ -14,14 +15,18 @@ class IRCProcess(Process):
         self.queue = kwargs.pop('queue')
         self.logger = kwargs.pop('logger')
         self.config = kwargs.pop('config')
-        self.irc = IRC(logger=self.logger, queue=self.queue)
+        
+        # pipe our config kwargs in to IRC class and start
+        cfg = dict(self.config.items('IRC'))
+        self.irc = IRC(logger=self.logger, queue=self.queue, **cfg)
         self.irc.connect()
+        
         super(IRCProcess, self).__init__()
         
     def get_irc(self):
         'Get the IRC connection'
         return self.irc
-        
+    
     def run(self):
         while True:
             # readsocket performs PING/PONG so we are effectively

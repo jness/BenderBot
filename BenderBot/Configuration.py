@@ -1,7 +1,7 @@
 from ConfigParser import ConfigParser
 import os
 
-def get_config():
+def get_config(cfg_name='~/.bender.conf'):
     '''This method will check the ``cfg_name`` for a BenderBot
     configuration file.
     
@@ -16,7 +16,6 @@ def get_config():
         'irc.freenode.net'
         
     '''
-    cfg_name = '~/.bender.conf'
     cfg = os.path.expanduser(cfg_name)
     if os.path.exists(cfg):
         config = ConfigParser()

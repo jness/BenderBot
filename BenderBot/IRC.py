@@ -3,19 +3,14 @@ from re import match
 from time import sleep
 from random import randint
 from ConfigParser import ConfigParser
-from BenderBot.Configuration import get_config
 from BenderBot.Logger import get_logger
-
-config = get_config()
-config_dict = dict(config.items('IRC'))
 
 class IRC:
     def __init__(self, **kwargs):
         '''Our initializer that sets our server attributes'''
-        kwargs.update(config_dict)
         self.server = kwargs.get('server',"irc.freenode.net")
         self.port = kwargs.get('port',"6667")
-        self.channel = kwargs.get('channel',"#BenderTest")
+        self.channel = kwargs.get('channel',"#bender-test")
         self.botnick = kwargs.get('botnick',"BenderBot")
         self.nickmsg = kwargs.get('nickmsg', 'Bite my shiny metal ass')
         self.logger = kwargs.get('logger', get_logger())
