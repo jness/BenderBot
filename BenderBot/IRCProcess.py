@@ -35,7 +35,8 @@ class IRCProcess(Process):
             # We also use Queue to append messages.
             # Your process can read from this Queue if they
             # need to listen for IRC messages, to do
-            # use self.irc_process.queue.get()
+            # use self.queue.get() and be sure your Process
+            # configuration has 'listen' set to True.
             #
             msg = self.irc.readsocket()
             if msg:
