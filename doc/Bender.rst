@@ -6,10 +6,10 @@
     
     ::
     
-        $ Bender --debug
-        2012-05-29 17:42:45,608 - INFO - connecting to irc.freenode.net:6667
-        2012-05-29 17:42:45,771 - INFO - setting nick to python-benderbot
-        2012-05-29 17:42:55,772 - INFO - joining channel #bender-test
-        2012-05-29 17:42:55,773 - INFO - Starting process IRCProcess
-        2012-05-29 17:45:03,073 - DEBUG - received: PING :lindbohm.freenode.net
-        2012-05-29 17:45:03,075 - DEBUG - sending: PONG :lindbohm.freenode.net
+        $ Bender
+        2012-09-10 09:55:55,088 - INFO - Starting IRCProcess
+        2012-09-10 09:55:55,088 - INFO - connecting to 127.0.0.1:6667
+        2012-09-10 09:55:55,089 - INFO - setting nick to benderbot
+        2012-09-10 09:55:57,098 - INFO - joining channel #bender-test
+        2012-09-10 09:55:57,100 - INFO - Starting Dispatcher
+        2012-09-10 09:55:57,122 - INFO - Starting process HTTPListenerProcesst

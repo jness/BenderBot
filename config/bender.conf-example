@@ -16,6 +16,9 @@ class = Listener
 # If a important process dies the entire bot will die
 important = True
 
+# If the process needs access to the IRC message queue
+listen = False
+
 [HTTPListener]
 # The key used when sending HTTP POST data to the
 # http server to authorize the message.
