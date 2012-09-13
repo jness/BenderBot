@@ -7,7 +7,7 @@ class ConfigTest(unittest.TestCase):
         pass
 
     def test_config_found(self):
-        self.config = get_config(cfg_name='config/bender.conf-example')
+        self.config = get_config()
         port = self.config.get('IRC', 'port')
         self.assertEqual(port, '6667')
         

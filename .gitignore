@@ -8,3 +8,4 @@ doc/_*
 .DS_Store
 subclass
 .coverage
+htmlcov

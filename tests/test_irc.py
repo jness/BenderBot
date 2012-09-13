@@ -6,18 +6,27 @@ import unittest
 class LoggerTest(unittest.TestCase):
 
     def setUp(self):
-        self.config = get_config(cfg_name='config/bender.conf-example')
-        self.irc = IRC(**dict(self.config.items('IRC')))
-        self.irc.connect()
+        self.config = get_config()
         
     def test_sendchannel(self):
-        self.assertTrue(self.irc.sendchannel('unittest'))
-        self.irc.quit()
+        irc = IRC(**dict(self.config.items('IRC')))
+        irc.connect()
+        self.assertTrue(irc.sendchannel('unittest'))
+        irc.quit()
         
     def test_sendnick(self):
+        irc = IRC(**dict(self.config.items('IRC')))
+        irc.connect()
         nick = self.config.get('IRC', 'botnick')
-        self.assertTrue(self.irc.sendnick(nick, 'unittest'))
-        self.irc.quit()
+        self.assertTrue(irc.sendnick(nick, 'unittest'))
+        irc.quit()
+        
+    def test_existing_nick(self):
+        options = dict(self.config.items('IRC'))
+        options['botnick'] = 'nessy'
+        irc = IRC(**options)
+        irc.connect()
+        irc.quit()
 
 if __name__ == '__main__':
     unittest.main()
