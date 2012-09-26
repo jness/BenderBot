@@ -1,7 +1,8 @@
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Event
 from ConfigParser import NoOptionError, NoSectionError
 from importlib import import_module
 from time import sleep
+import os
 
 class Dispatcher(Process):
     ''' The Dispatcher for starting up all configured processes in
@@ -11,6 +12,7 @@ class Dispatcher(Process):
         self.logger = kwargs.pop('logger')
         self.config = kwargs.pop('config')
         super(Dispatcher, self).__init__()
+        self.exit = Event()
         
     def __setup(self):
         'Setup before process start'
@@ -53,13 +55,14 @@ class Dispatcher(Process):
             # finally start the process
             self.logger.info('Starting process %s' % section)
             myclass.start()
-           
+            self.logger.info('Process %s pid is %s' % (section, myclass.pid))
+            
             # see if this process is important and needs to be watched
             self.processes.append(myclass)
             try:
-                important = self.config.get(section, 'important')
+                important = self.config.getboolean(section, 'important')
             except NoOptionError:
-                important = False   
+                important = False
             if important:
                 self.important_processes.append(myclass)
                 
@@ -71,19 +74,27 @@ class Dispatcher(Process):
                 
     def __monitor(self):
         'Monitor our important processes'
-        for p in self.important_processes:
-            if not p.is_alive():
-                for process in self.processes:
-                    process.terminate()
-                raise Exception('One of your important processes died')
-
-        
+        for process in self.processes:
+            if not process.is_alive():
+                self.logger.warn('Process %s is not alive' % process)
+                item = self.processes.index(process)
+                del(self.processes[item])
+                if process in self.important_processes:
+                    self.logger.error('Shutdown Dispatcher %s is not alive' \
+                                     % process)
+                    self.shutdown()
+                    
+    def shutdown(self):
+        self.exit.set()
+                
     def run(self):
-        self.__setup()
-        self.__start()
-        while True:
-            self.__monitor()
-            msg = self.queue.get()
-            if msg:
-                self.__queueupdate(msg)
-            
+            self.__setup()
+            self.__start()
+            while not self.exit.is_set():
+                self.__monitor()
+                try:
+                    self.__queueupdate(self.queue.get_nowait())
+                except:
+                    pass
+                sleep(5)
+

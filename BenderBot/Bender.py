@@ -8,7 +8,7 @@ from ConfigParser import NoOptionError, NoSectionError
 from multiprocessing import Queue
 from time import sleep
 import argparse
-import sys
+import sys, os
 import signal
 
 def quit(signal, frame):
@@ -36,6 +36,9 @@ def main():
         logger = get_logger(level='DEBUG')
     else:
         logger = get_logger(level='INFO')
+
+    # show PIDs if in debug mode        
+    logger.info('Bender pid is %s' % os.getpid())
         
     # create a Queue to hold all IRC messages
     queue = Queue()
@@ -43,6 +46,7 @@ def main():
     # Start the IRC root process that handles PING/PONG,
     logger.info('Starting IRCProcess')
     irc_process = IRCProcess(queue=queue, logger=logger, config=config)
+    irc_process._pid = os.getpid()
     irc_process.start()
     
     # Start our Dispatcher
@@ -50,16 +54,17 @@ def main():
     dispatcher = Dispatcher(logger=logger, config=config)
     dispatcher.irc = irc_process.get_irc()
     dispatcher.queue = queue
+    dispatcher._pid = os.getpid()
     dispatcher.start()
     
     # loop to watch our irc_process
     while True:
         if not irc_process.is_alive():
-            dispatcher.terminate()
-            raise Exception('IRCProcess died...')
-        if not dispatcher.is_alive():
-            irc_process.terminate()
-            raise Exception('Dispatcher died...')
+            logger.info('IRCProcess died...')
+            os.killpg(os.getpid(), signal.SIGKILL)
+        if not dispatcher.is_alive() or dispatcher.exit.is_set():
+            logger.info('Dispatcher died...')
+            os.killpg(os.getpid(), signal.SIGKILL)
         sleep(5)
         
 if __name__ == '__main__':
