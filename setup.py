@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.0b'
+version = '1.0.0b'
 
 setup(name='BenderBot',
       version=version,
