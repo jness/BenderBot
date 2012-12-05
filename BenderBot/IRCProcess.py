@@ -28,12 +28,6 @@ class IRCRead(Process):
             # readsocket performs PING/PONG so we are effectively
             # keeping the connection alive here.
             #
-            # We also use Queue to append messages.
-            # Your process can read from this Queue if they
-            # need to listen for IRC messages, to do
-            # use self.queue.get() and be sure your Process
-            # configuration has 'listen' set to True.
-            #
             msg = self.irc.readsocket()
             if msg:
                 self.logger.debug("Adding Message to RabbitMQ: %s" % msg)
