@@ -38,7 +38,13 @@ We add a <b>entry_point</b> to BenderBot within the setup.py.
 All that is needed to start the Bot is to run <b>Bender</b>,
 this will call BenderBot.Bender.main:
 
-    $ Bender
+    $ Bender 
+    2012-12-05 14:53:32,690 - INFO - connecting to 127.0.0.1:6667
+    2012-12-05 14:53:32,832 - INFO - setting nick to benderbot
+    2012-12-05 14:53:52,863 - INFO - joining channel #bendertest
+    2012-12-05 14:53:52,863 - INFO - Starting IRCProcess Read
+    2012-12-05 14:53:52,869 - INFO - Starting IRCProcess Write
+
 
 == Tools
 
