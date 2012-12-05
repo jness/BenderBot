@@ -57,6 +57,17 @@ def main():
                           config=config)
     irc_write.start()
     
+    # Keep an eye on our two Processes
+    # so we can kill the script if need be.
+    while True:
+        if not irc_read.is_alive():
+            logger.error('IRCRead Process died..')
+            irc_write.terminate()
+            raise Exception('IRCRead Process died')
+        if not irc_write.is_alive():
+            logger.error('IRCWrite Process died..')
+            irc_read.terminate()
+            raise Exception('IRCWrite Process died')
 
 if __name__ == '__main__':
     main()
