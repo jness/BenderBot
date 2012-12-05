@@ -1,8 +1,8 @@
 from BenderBot.Configuration import get_config
 from BenderBot.Logger import get_logger
-from BenderBot.IRC import IRC
-from BenderBot.IRCProcess import IRCRead, IRCWrite
+from BenderBot.IRCProcess import IRCProcess
 from BenderBot.BenderMQ import Queue
+from BenderBot.IRC import IRC
 from time import sleep
 import argparse
 import sys
@@ -46,29 +46,24 @@ def main():
 
     # Start the IRC read process that handles PING/PONG,
     # and adding any IRC messages to RabbitMQ
-    logger.info('Starting IRCRead')
-    irc_read = IRCRead(irc=irc, logger=logger,
-                          config=config, queue=queue)
+    logger.info('Starting IRCProcess Read')
+    
+    irc_read = IRCProcess(name='irc_read', target='read',
+                          logger=logger, config=config, queue=queue, irc=irc)
+    irc_read.daemon = True
     irc_read.start()
     
     # Start the IRC write process
-    logger.info('Starting IRCWrite')
-    irc_write = IRCWrite(irc=irc, logger=logger,
-                          config=config)
+    logger.info('Starting IRCProcess Write')
+    irc_write = IRCProcess(name='irc_write', target='write',
+                           logger=logger, config=config, queue=queue, irc=irc)
+    irc_write.daemon = True
     irc_write.start()
     
-    # Keep an eye on our two Processes
-    # so we can kill the script if need be.
-    while True:
-        if not irc_read.is_alive():
-            logger.error('IRCRead Process died..')
-            irc_write.terminate()
-            raise Exception('IRCRead Process died')
-        if not irc_write.is_alive():
-            logger.error('IRCWrite Process died..')
-            irc_read.terminate()
-            raise Exception('IRCWrite Process died')
-        sleep(2)
+    # keep running as long as subprocesses are good
+    while irc_write.is_alive() and irc_read.is_alive():
+        pass
+        sleep(1)
 
 if __name__ == '__main__':
     main()

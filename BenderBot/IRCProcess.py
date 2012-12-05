@@ -12,41 +12,37 @@ class MyQueue(Queue):
     def callback(self, ch, method, properties, body):
         self.irc.sendchannel(body)
 
-class IRCRead(Process):
+class IRCProcess(Process):
     '''Root IRC Class to handle IRC communication and PING/PONG'''
     
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.logger = kwargs.pop('logger')
         self.config = kwargs.pop('config')
         self.queue = kwargs.pop('queue')
         self.irc = kwargs.pop('irc')
         
-        super(IRCRead, self).__init__()
-           
-    def run(self):
+        # set the write sub child method for this process
+        target = kwargs.pop('target')
+        if target == 'read':
+            kwargs['target'] = self.irc_read
+        elif target == 'write':
+            kwargs['target'] = self.irc_write
+        
+        super(IRCProcess, self).__init__(*args, **kwargs)
+        
+    def irc_read(self):
+        '''readsocket performs PING/PONG so we are effectively
+            keeping the connection alive here.'''
         while True:
-            # readsocket performs PING/PONG so we are effectively
-            # keeping the connection alive here.
-            #
             msg = self.irc.readsocket()
             if msg:
                 self.logger.debug("Adding Message to RabbitMQ: %s" % msg)
                 self.queue.publish(msg)
             sleep(0.02) # Slow down the loop just a bit to avoid CPU melt ;)
 
-class IRCWrite(Process):
-    '''Root IRC Class to handle incoming messages from RabbitMQ'''
-    
-    def __init__(self, **kwargs):
-        self.logger = kwargs.pop('logger')
-        self.irc = kwargs.pop('irc')
-        self.config = kwargs.pop('config')
-        
-        super(IRCWrite, self).__init__()
-           
-    def run(self):
+    def irc_write(self):
+        '''write messages to the channel for anything in RabbitMQ'''
         cfg = dict(self.config.items('RabbitMQ'))
         queue = MyQueue(host=cfg['host'], exchange='ircwrite',
                         irc=self.irc)
         queue.subscribe()
-        
