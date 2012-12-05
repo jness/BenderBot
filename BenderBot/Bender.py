@@ -1,14 +1,11 @@
 from BenderBot.Configuration import get_config
 from BenderBot.Logger import get_logger
 from BenderBot.IRC import IRC
-from BenderBot.IRCProcess import IRCProcess
-from BenderBot.Dispatcher import Dispatcher
+from BenderBot.IRCProcess import IRCRead, IRCWrite
+from BenderBot.BenderMQ import Queue
 
-from ConfigParser import NoOptionError, NoSectionError
-from multiprocessing import Queue
-from time import sleep
 import argparse
-import sys, os
+import sys
 import signal
 
 def quit(signal, frame):
@@ -21,15 +18,15 @@ def main():
     
     # handle CTRL+C nicely
     signal.signal(signal.SIGINT, quit)
+    
+    # get our configuration
+    config = get_config()
 
     # process args for debug
     parser = argparse.ArgumentParser()
     parser.add_argument('--debug', action="store_true", dest="debug",
                         default=False, help='Turn on verbose debugging')
     args = parser.parse_args()
-
-    global config, logger
-    config = get_config()
     
     # set logging level based on argparse
     if args.debug:
@@ -37,35 +34,29 @@ def main():
     else:
         logger = get_logger(level='INFO')
 
-    # show PIDs if in debug mode        
-    logger.info('Bender pid is %s' % os.getpid())
-        
-    # create a Queue to hold all IRC messages
-    queue = Queue()
-        
-    # Start the IRC root process that handles PING/PONG,
-    logger.info('Starting IRCProcess')
-    irc_process = IRCProcess(queue=queue, logger=logger, config=config)
-    irc_process._pid = os.getpid()
-    irc_process.start()
+    # Connect to the RabbitMQ server
+    cfg = dict(config.items('RabbitMQ'))
+    queue = Queue(**cfg)
     
-    # Start our Dispatcher
-    logger.info('Starting Dispatcher')
-    dispatcher = Dispatcher(logger=logger, config=config)
-    dispatcher.irc = irc_process.get_irc()
-    dispatcher.queue = queue
-    dispatcher._pid = os.getpid()
-    dispatcher.start()
+    # Connec to IRC
+    cfg = dict(config.items('IRC'))
+    irc = IRC(logger=logger, queue=queue, **cfg)
+    irc.connect()
+    irc.joinchannel()
+
+    # Start the IRC read process that handles PING/PONG,
+    # and adding any IRC messages to RabbitMQ
+    logger.info('Starting IRCRead')
+    irc_read = IRCRead(irc=irc, logger=logger,
+                          config=config, queue=queue)
+    irc_read.start()
     
-    # loop to watch our irc_process
-    while True:
-        if not irc_process.is_alive():
-            logger.info('IRCProcess died...')
-            os.killpg(os.getpid(), signal.SIGKILL)
-        if not dispatcher.is_alive() or dispatcher.exit.is_set():
-            logger.info('Dispatcher died...')
-            os.killpg(os.getpid(), signal.SIGKILL)
-        sleep(5)
-        
+    # Start the IRC write process
+    logger.info('Starting IRCWrite')
+    irc_write = IRCWrite(irc=irc, logger=logger,
+                          config=config)
+    irc_write.start()
+    
+
 if __name__ == '__main__':
     main()

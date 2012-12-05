@@ -1,32 +1,28 @@
-from BenderBot.Configuration import get_config
-from multiprocessing import Process, Queue
-from BenderBot.IRC import IRC
+from multiprocessing import Process
 from time import sleep
+from BenderBot.BenderMQ import Queue
 
-class IRCProcess(Process):
-    '''Root IRC Class to handle IRC communication and PING/PONG
-    
-    You can access the IRC communication Pipe from your processes
-    simply by accessing self.irc_process.output.recv(), just be
-    sure your sleep is inline with IRCProcess.
-    '''
+class MyQueue(Queue):
+    '''My Custom Queue for sending messages on subscribe'''
+    def __init__(self, **kwargs):
+        super(MyQueue, self).__init__()
+        self.irc = kwargs.pop('irc')
+        self.exchange = kwargs.pop('exchange')
+        
+    def callback(self, ch, method, properties, body):
+        self.irc.sendchannel(body)
+
+class IRCRead(Process):
+    '''Root IRC Class to handle IRC communication and PING/PONG'''
     
     def __init__(self, **kwargs):
-        self.queue = kwargs.pop('queue')
         self.logger = kwargs.pop('logger')
         self.config = kwargs.pop('config')
+        self.queue = kwargs.pop('queue')
+        self.irc = kwargs.pop('irc')
         
-        # pipe our config kwargs in to IRC class and start
-        cfg = dict(self.config.items('IRC'))
-        self.irc = IRC(logger=self.logger, queue=self.queue, **cfg)
-        self.irc.connect()
-        
-        super(IRCProcess, self).__init__()
-        
-    def get_irc(self):
-        'Get the IRC connection'
-        return self.irc
-    
+        super(IRCRead, self).__init__()
+           
     def run(self):
         while True:
             # readsocket performs PING/PONG so we are effectively
@@ -40,6 +36,23 @@ class IRCProcess(Process):
             #
             msg = self.irc.readsocket()
             if msg:
-                self.logger.debug("Adding Message to Queue: %s" % msg)
-                self.queue.put(msg)
+                self.logger.debug("Adding Message to RabbitMQ: %s" % msg)
+                self.queue.publish(msg)
             sleep(0.02) # Slow down the loop just a bit to avoid CPU melt ;)
+
+class IRCWrite(Process):
+    '''Root IRC Class to handle incoming messages from RabbitMQ'''
+    
+    def __init__(self, **kwargs):
+        self.logger = kwargs.pop('logger')
+        self.irc = kwargs.pop('irc')
+        self.config = kwargs.pop('config')
+        
+        super(IRCWrite, self).__init__()
+           
+    def run(self):
+        cfg = dict(self.config.items('RabbitMQ'))
+        queue = MyQueue(host=cfg['host'], exchange='ircwrite',
+                        irc=self.irc)
+        queue.subscribe()
+        
