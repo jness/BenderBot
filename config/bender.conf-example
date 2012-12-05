@@ -5,30 +5,10 @@ channel = #bender-test
 botnick = benderbot
 nickmsg = Bite my shiny metal ass
 
-# Some IRC server such as Freenode need a couple seconds
+# Some IRC servers such as Freenode need a couple seconds
 # on connection before they can join the channel.
 wait = 10
 
-[HTTPListenerProcess]
-library = BenderBot.HTTPListener
-class = Listener
-
-# If a important process dies the entire bot will die
-important = True
-
-# If the process needs access to the IRC message queue
-listen = False
-
-[HTTPListener]
-# The key used when sending HTTP POST data to the
-# http server to authorize the message.
-key = super_secret_key
-
-# The TCP address the BasicHTTPServer will bind
-# to, note this can be left blank to specify all address
-# or for security can be put to 127.0.0.1 for only local traffic.
-host = 
-
-# The TCP port BasicHTTPServer will listen on
-# for POST message
-port = 8000
+[RabbitMQ]
+host = 127.0.0.1
+exchange = irc

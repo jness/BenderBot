@@ -1,0 +1,51 @@
+= BenderBot Documentation
+
+BenderBot is a simple IRC Bot written purely in Python.
+
+The Bot uses RabbitMQ to handle all message exchange.
+
+All messages the bot sees will be added to a 'irc' exchange
+channel, and all message the Bot needs to send will be added
+to the 'ircwrite' exchange.
+
+== Requirements
+
+  * Python 2 => 2.6    http://python.org
+  * RabbitMQ Server    http://rabbitmq.com
+  * pika               http://pypi.python.org/pypi/pika
+  * argparse           http://pypi.python.org/pypi/argparse
+
+== Installation
+
+Get the latest sources from Github
+    $ git clone git://github.com/jness/BenderBot.git
+    
+Change branch to rabbitMQ
+    $ git checkout rabbitMQ
+    
+Install the module
+    $ python setup.py install
+    
+Copy the example configuration
+    $ cp config/bender.conf-example ~/.bender.conf
+    
+Edit your configuration
+    $ vim ~/.bender.conf
+
+== Running the Bot
+
+We add a <b>entry_point</b> to BenderBot within the setup.py.
+All that is needed to start the Bot is to run <b>Bender</b>,
+this will call BenderBot.Bender.main:
+
+    $ Bender 
+    2012-12-05 14:53:32,690 - INFO - connecting to 127.0.0.1:6667
+    2012-12-05 14:53:32,832 - INFO - setting nick to benderbot
+    2012-12-05 14:53:52,863 - INFO - joining channel #bendertest
+    2012-12-05 14:53:52,863 - INFO - Starting IRCProcess Read
+    2012-12-05 14:53:52,869 - INFO - Starting IRCProcess Write
+
+
+== Tools
+
+See the README with in BenderBot/tools for more info.

@@ -1,15 +1,21 @@
 Software: BenderBot
 
 Description: A configurable bare bone IRC bot written in Python
-Documentation: http://flip-edesign.com/BenderBot/
 
 Author: Jeffrey Ness
 License: GPLv3
-Version: 0.6
+Version: 1.0.0b
 
+Requires: RabbitMQ messaging server (www.rabbitmq.com)
 
 Changes:
 -------------------------------------------------------
+1.0.0b Now requires RabbitMQ for Message Exchange.
+
+       All previous modules will not work with this version
+       of BenderBot as now RabbitMQ is used over
+       multiprocessing.Queue.
+       
 0.6  Using a Dispatcher to handle all Processes.
      Processes can now take the "listen" config option,
      this gives them there own "queue" attribute to read

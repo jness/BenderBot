@@ -14,8 +14,8 @@ class IRC:
         self.botnick = kwargs.get('botnick',"BenderBot")
         self.nickmsg = kwargs.get('nickmsg', 'Bite my shiny metal ass')
         self.logger = kwargs.get('logger', get_logger())
-        self.wait = kwargs.get('wait', '10')
-        self.queue = kwargs.get('queue', None)
+        self.wait = kwargs.get('wait', 0)
+        self.queue = kwargs.pop('queue')
         
     def connect(self):
         ''' The ``connect`` method performs a couple of key actions.
@@ -29,7 +29,6 @@ class IRC:
             >>> irc.connect()
             [INFO] connecting to irc.freenode.net:6667
             [INFO] setting nick to BenderBot
-            [INFO] joining channel #bender-test
         
         '''
         self.logger.info('connecting to %s:%s' % (self.server, self.port))
@@ -53,8 +52,11 @@ class IRC:
             self.botnick = '%s%s' % (self.botnick, randint(100, 50000))
             if not self.__identify():
                 raise Exception('Unable to set nick')
-                    
-        self.__joinchannel()
+            
+    def joinchannel(self):
+        'Private method used to join a IRC channel'
+        self.logger.info('joining channel %s' % self.channel)
+        self.ircsock.send("JOIN %s\n" % self.channel)
                 
     def readsocket(self):
         '''The ``readsocket`` method will first validate a socket is
@@ -114,8 +116,8 @@ class IRC:
         self.__checksocket()
         self.logger.info('sending: PRIVMSG %s :%s' % (self.channel, msg))
         response = self.ircsock.send("PRIVMSG %s :%s\n" % (self.channel, msg))
-        if self.queue:
-            self.queue.put(':%s!@%s PRIVMSG %s :%s' % (self.botnick,
+        self.logger.debug("Adding Message to RabbitMQ: %s" % msg)
+        self.queue.publish(':%s!@%s PRIVMSG %s :%s' % (self.botnick,
                                                        self.botnick,
                                                        self.channel,
                                                        msg))
@@ -149,11 +151,6 @@ class IRC:
             self.ircsock.getsockname()
         except:
             raise Exception('Unable to read from socket')
-    
-    def __joinchannel(self):
-        'Private method used to join a IRC channel'
-        self.logger.info('joining channel %s' % self.channel)
-        self.ircsock.send("JOIN %s\n" % self.channel)
     
     def __pong(self, response):
         'Private method that will send PONG to requesting service'

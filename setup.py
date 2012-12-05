@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.6'
+version = '1.0.0b'
 
 setup(name='BenderBot',
       version=version,
@@ -16,7 +16,7 @@ setup(name='BenderBot',
       packages=find_packages(exclude=['ez_setup', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=['importlib','argparse',],
+      install_requires=['argparse','pika'],
       test_suite='nose.collector',
       entry_points= {'console_scripts': ['Bender = BenderBot.Bender:main']},
       )
