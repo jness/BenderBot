@@ -1,0 +1,22 @@
+BenderBot/tools provides a tool for sending and receiving
+messages from a RabbitMQ server.
+
+# Reading from a Message Exchange:
+
+    $ python tools/read.py 
+    [*] Waiting for logs. To exit press CTRL+C
+
+# Sending a Message to the Exchange:
+
+    $ python tools/write.py this is a test message
+    [x] Sent 'this is a test message'
+
+# If you had BenderBot running you would see something like this
+on your tools/read.py screen:
+
+    [*] Waiting for logs. To exit press CTRL+C
+    [x] ':benderbot19070!@benderbot19070 PRIVMSG #bendertest :this is a test message'
+    
+# And in BenderBot you would see something like this:
+
+    2012-12-05 15:57:20,818 - INFO - sending: PRIVMSG #bendertest :this is a test message
