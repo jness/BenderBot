@@ -3,7 +3,7 @@ from BenderBot.Logger import get_logger
 from BenderBot.IRC import IRC
 from BenderBot.IRCProcess import IRCRead, IRCWrite
 from BenderBot.BenderMQ import Queue
-
+from time import sleep
 import argparse
 import sys
 import signal
@@ -68,6 +68,7 @@ def main():
             logger.error('IRCWrite Process died..')
             irc_read.terminate()
             raise Exception('IRCWrite Process died')
+        sleep(2)
 
 if __name__ == '__main__':
     main()
