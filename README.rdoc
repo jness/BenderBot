@@ -14,14 +14,19 @@ to the 'ircwrite' exchange.
   * RabbitMQ Server    http://rabbitmq.com
   * pika               http://pypi.python.org/pypi/pika
   * argparse           http://pypi.python.org/pypi/argparse
+  
+== Recommended
+
+  * Virtualenv         http://pypi.python.org/pypi/virtualenv
 
 == Installation
 
 Get the latest sources from Github
     $ git clone git://github.com/jness/BenderBot.git
     
-Change branch to rabbitMQ
-    $ git checkout rabbitMQ
+Recommended to install in Virtualenv
+    $ virtualenv ~/BenderEnv
+    $ source ~/BenderEnv/bin/activate
     
 Install the module
     $ python setup.py install
