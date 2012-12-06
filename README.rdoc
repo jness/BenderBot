@@ -17,14 +17,14 @@ to the 'ircwrite' exchange.
   
 == Recommended
 
-  * Virtualenv         http://pypi.python.org/pypi/virtualenv
+  * virtualenv         http://pypi.python.org/pypi/virtualenv
 
 == Installation
 
 Get the latest sources from Github
     $ git clone git://github.com/jness/BenderBot.git
     
-Recommended to install in Virtualenv
+Recommended to install in a virtualenv
     $ virtualenv ~/BenderEnv
     $ source ~/BenderEnv/bin/activate
     
