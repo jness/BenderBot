@@ -9,3 +9,4 @@ doc/_*
 subclass
 .coverage
 htmlcov
+logdir

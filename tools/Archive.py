@@ -1,5 +1,18 @@
 #!/usr/bin/env python
 
+# Archive.py will write any JOIN, PART, QUIT, PRIVMSG
+# messages identified by RabbitMQ to a text file
+# using a Year-Month-Day format.
+#
+# This may be useful for logging or archiving
+# all communications on your IRC channel.
+#
+# Usage:
+#
+#   $ python tools/Archive.py 
+#   2012-12-06 11:29:16,298 - INFO - Appending message to ./logdir/2012-12-6.txt
+
+
 from BenderBot.BenderMQ import Queue
 from BenderBot.Configuration import get_config
 from BenderBot.Logger import get_logger
