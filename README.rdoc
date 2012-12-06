@@ -51,6 +51,7 @@ this will call BenderBot.Bender.main:
     2012-12-05 14:53:52,869 - INFO - Starting IRCProcess Write
 
 
-== Tools
+== Utils
 
-See the README with in BenderBot/tools for more info.
+We provide a few utility script which can interact with
+RabbitMQ,  see the README in BenderBot/utils for more info.
