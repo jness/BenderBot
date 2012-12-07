@@ -82,10 +82,9 @@ class ArchiveQueue(Queue):
     def checkQuit(self, body):
         m = match(':(.*)!.* QUIT', body)
         if m:
-            (nick, channel) = m.groups()
-            if channel == self.irccfg['channel']:
-                msg = (nick, 'has quit')
-                return msg
+            (nick) = m.groups()
+            msg = (nick, 'has quit')
+            return msg
             
 def main():
     config = get_config()

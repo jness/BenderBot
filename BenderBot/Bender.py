@@ -62,7 +62,6 @@ def main():
     
     # keep running as long as subprocesses are good
     while irc_write.is_alive() and irc_read.is_alive():
-        pass
         sleep(1)
 
 if __name__ == '__main__':
