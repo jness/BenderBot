@@ -82,8 +82,8 @@ class ArchiveQueue(Queue):
     def checkQuit(self, body):
         m = match(':(.*)!.* QUIT', body)
         if m:
-            (nick) = m.groups()
-            msg = (nick, 'has quit')
+            nick = m.groups()
+            msg = (nick[0], 'has quit')
             return msg
             
 def main():
