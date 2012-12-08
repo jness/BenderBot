@@ -1,5 +1,5 @@
-BenderBot/tools provides a tool for sending and receiving
-messages from a RabbitMQ server.
+BenderBot/utils provides a tool for sending and
+a tool for receiving messages from a RabbitMQ server.
 
 # Reading from a Message Exchange:
 
