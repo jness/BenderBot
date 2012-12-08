@@ -55,3 +55,31 @@ this will call BenderBot.Bender.main:
 
 We provide a few utility script which can interact with
 RabbitMQ,  see the README in BenderBot/utils for more info.
+
+== Using the IRC class outside the Bot
+
+You can see all the available methods for the IRC class by looking
+at BenderBot/IRC.py
+
+=== Import the IRC class and define your IRC object
+    >>> from BenderBot.IRC import IRC
+    >>> irc = IRC(server='irc.freenode.net', channel='#bender-test', botnick='BenderIRCBot7')
+
+=== Connect to the IRC server
+    >>> irc.connect()
+    
+=== Read from the IRC socket, this provides all IRC communication and handles PING/PONG
+    >>> while True:
+    ...   irc.readsocket()
+    ... 
+    ':calvino.freenode.net NOTICE * :*** Looking up your hostname...'
+    ':calvino.freenode.net NOTICE * :*** Checking Ident'
+    ':calvino.freenode.net NOTICE * :*** No Ident response'
+    ":calvino.freenode.net NOTICE * :*** Couldn't look up your hostname"
+    ...
+    ...
+
+=== Sending a message to the channel then quit
+    >>> irc.sendchannel('hello channel')
+    36
+    >>> irc.quit()
