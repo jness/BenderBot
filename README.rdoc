@@ -76,6 +76,7 @@ at BenderBot/IRC.py
     ':calvino.freenode.net NOTICE * :*** Checking Ident'
     ':calvino.freenode.net NOTICE * :*** No Ident response'
     ":calvino.freenode.net NOTICE * :*** Couldn't look up your hostname"
+    ':calvino.freenode.net 001 BenderIRCBot7 :Welcome to the freenode Internet Relay Chat Network BenderIRCBot7'
     ...
     ...
 
