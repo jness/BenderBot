@@ -15,7 +15,7 @@ class IRC:
         self.nickmsg = kwargs.get('nickmsg', 'Bite my shiny metal ass')
         self.logger = kwargs.get('logger', get_logger())
         self.wait = kwargs.get('wait', 0)
-        self.queue = kwargs.pop('queue')
+        self.queue = kwargs.pop('queue', None)
         
     def connect(self):
         ''' The ``connect`` method performs a couple of key actions.
@@ -117,10 +117,11 @@ class IRC:
         self.logger.info('sending: PRIVMSG %s :%s' % (self.channel, msg))
         response = self.ircsock.send("PRIVMSG %s :%s\n" % (self.channel, msg))
         self.logger.debug("Adding Message to RabbitMQ: %s" % msg)
-        self.queue.publish(':%s!@%s PRIVMSG %s :%s' % (self.botnick,
-                                                       self.botnick,
-                                                       self.channel,
-                                                       msg))
+        if self.queue:
+            self.queue.publish(':%s!@%s PRIVMSG %s :%s' % (self.botnick,
+                                                           self.botnick,
+                                                           self.channel,
+                                                           msg))
         return response
 
     def sendnick(self, nick, msg):
