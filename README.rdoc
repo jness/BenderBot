@@ -79,6 +79,9 @@ at BenderBot/IRC.py
     ':calvino.freenode.net 001 BenderIRCBot7 :Welcome to the freenode Internet Relay Chat Network BenderIRCBot7'
     ...
     ...
+    
+=== Join the channel
+    >>> irc.joinchannel()
 
 === Sending a message to the channel then quit
     >>> irc.sendchannel('hello channel')
