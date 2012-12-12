@@ -33,6 +33,7 @@ class IRCProcess(Process):
     def irc_read(self):
         '''readsocket performs PING/PONG so we are effectively
             keeping the connection alive here.'''
+        self.logger.debug('%s started on %s' % (self, self.pid))
         while True:
             msg = self.irc.readsocket()
             if msg:
@@ -42,6 +43,7 @@ class IRCProcess(Process):
 
     def irc_write(self):
         '''write messages to the channel for anything in RabbitMQ'''
+        self.logger.debug('%s started on %s' % (self, self.pid))
         cfg = dict(self.config.items('RabbitMQ'))
         queue = MyQueue(host=cfg['host'], exchange='ircwrite',
                         irc=self.irc)

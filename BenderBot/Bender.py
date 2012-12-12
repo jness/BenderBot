@@ -9,7 +9,7 @@ import sys
 import signal
 
 def quit(signal, frame):
-    'Capture SIGINT ctrl+c'
+    'Quit function'
     sys.exit(0)
 
 def main():
@@ -19,6 +19,9 @@ def main():
     # handle CTRL+C nicely
     signal.signal(signal.SIGINT, quit)
     
+    # handle Linux kill SIGTERM
+    signal.signal(signal.SIGTERM, quit)
+
     # get our configuration
     config = get_config()
 
@@ -38,7 +41,7 @@ def main():
     cfg = dict(config.items('RabbitMQ'))
     queue = Queue(**cfg)
     
-    # Connec to IRC
+    # Connect to IRC
     cfg = dict(config.items('IRC'))
     irc = IRC(logger=logger, queue=queue, **cfg)
     irc.connect()
@@ -60,9 +63,17 @@ def main():
     irc_write.daemon = True
     irc_write.start()
     
-    # keep running as long as subprocesses are good
+    # keep an eye on our IRC Read and Write processes
     while irc_write.is_alive() and irc_read.is_alive():
+        # take a nap ;)
         sleep(1)
+
+    # the only way we end up here is if irc_write or irc_read died,
+    # lets report the status of each and shutdown
+    write, read = (irc_write.is_alive(), irc_read.is_alive())
+    logger.warn('IRC Write process alive: %s' % write)
+    logger.warn('IRC Read process alive: %s' % read)
+    logger.info('BenderBot is shutting down')
 
 if __name__ == '__main__':
     main()
