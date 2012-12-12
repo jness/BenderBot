@@ -38,7 +38,7 @@ class ArchiveQueue(Queue):
                        'checkPart', 'checkQuit']:
             method = getattr(self, methodname)
             nick, message = method(body)
-            if nick and messasge:
+            if nick and message:
                 timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
                 self.__appendLog((timestamp, nick, message))
                 
