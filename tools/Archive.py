@@ -10,7 +10,7 @@
 # Usage:
 #
 #   $ python tools/Archive.py 
-#   2012-12-06 11:29:16,298 - INFO - Appending message to ./logdir/2012-12-6.txt
+#   2012-12-06 11:29:16,298 - INFO - Appending message to ./logdir/2012/2012-12-6.txt
 
 
 from BenderBot.BenderMQ import Queue
@@ -22,7 +22,7 @@ from datetime import datetime
 import os
 
 # You can alter where logs are placed here
-FILELOCATION = './logdir/'
+FILELOCATION = './logdir'
 
 class ArchiveQueue(Queue):
     
@@ -45,7 +45,7 @@ class ArchiveQueue(Queue):
     def __appendLog(self, data):
         d = datetime.now()
         filename = '%s-%s-%s.txt' % (d.year, d.month, d.day)
-        p = os.path.expanduser(FILELOCATION)
+        p = os.path.expanduser('%s/%s/' % (FILELOCATION, str(d.year)))
         if not os.path.exists(p):
             os.makedirs(p)
 
