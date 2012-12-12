@@ -37,10 +37,10 @@ class ArchiveQueue(Queue):
         for methodname in ['checkPrivmsg', 'checkJoin',
                        'checkPart', 'checkQuit']:
             method = getattr(self, methodname)
-            res = method(body)
-            if res:
+            nick, message = method(body)
+            if nick and messasge:
                 timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-                self.__appendLog((timestamp, res[0], res[1]))
+                self.__appendLog((timestamp, nick, message))
                 
     def __appendLog(self, data):
         d = datetime.now()
@@ -49,10 +49,9 @@ class ArchiveQueue(Queue):
         if not os.path.exists(p):
             os.makedirs(p)
 
-        timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
         self.logger.info('Appending message to %s%s' % (p, filename))
         f = open('%s/%s' % (p, filename), 'a+')
-        f.write('%s <%s> %s\n' % data)
+        f.write('%s %s %s\n' % data)
         f.close()
             
     def checkPrivmsg(self, body):
@@ -60,7 +59,7 @@ class ArchiveQueue(Queue):
         if m:
             (nick, channel, message) = m.groups()
             if channel == self.irccfg['channel']:
-                msg = (nick, message)
+                msg = ('<%s>' % nick, message)
                 return msg
     
     def checkJoin(self, body):
