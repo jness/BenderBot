@@ -5,6 +5,10 @@ channel = #bender-test
 botnick = benderbot
 nickmsg = Bite my shiny metal ass
 
+# If you need to identify to the IRC
+# server uncomment the below
+# password = mypassword
+
 # Some IRC servers such as Freenode need a couple seconds
 # on connection before they can join the channel.
 wait = 10

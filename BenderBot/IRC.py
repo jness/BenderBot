@@ -138,6 +138,12 @@ class IRC:
         self.logger.info('sending: PRIVMSG %s :%s' % (nick, msg))
         response = self.ircsock.send("PRIVMSG %s :%s\n" % (nick, msg))
         return response
+
+    def identify(self, password):
+        '''Identify to NickServ'''
+        msg = 'IDENTIFY %s %s' % (self.botnick, password)
+        response = self.sendnick('NickServ', msg)
+        return response
     
     def __checkping(self, response):
         'Private method that will check a response for PING'

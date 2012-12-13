@@ -50,6 +50,8 @@ def main():
         try:
             irc = IRC(logger=logger, queue=queue, **cfg)
             irc.connect()
+            if cfg.has_key('password'):
+                irc.identify(cfg['password'])
             irc.joinchannel()
 
             # Start the IRC read process that handles PING/PONG,
