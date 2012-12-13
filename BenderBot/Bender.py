@@ -52,6 +52,7 @@ def main():
             irc.connect()
             if cfg.has_key('password'):
                 irc.identify(cfg['password'])
+                sleep(1)
             irc.joinchannel()
 
             # Start the IRC read process that handles PING/PONG,
