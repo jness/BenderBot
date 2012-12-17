@@ -17,6 +17,7 @@ setup(name='BenderBot',
       include_package_data=True,
       zip_safe=False,
       install_requires=['argparse','pika'],
+      tests_require=['nose'],
       test_suite='nose.collector',
       entry_points= {'console_scripts': ['Bender = BenderBot.Bender:main']},
       )

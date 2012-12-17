@@ -1,0 +1,19 @@
+= BenderBot Test Coverage
+
+$ coverage run setup.py test
+
+$ coverage report -m --omit=pika*
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+BenderBot/BenderMQ           32     10    69%   16-17, 40, 44-56
+BenderBot/Configuration       9      0   100%   
+BenderBot/IRC               103     23    78%   41-44, 52-54, 58-59, 86, 121, 152-153, 159-160, 164-170, 184-185
+BenderBot/Logger              8      0   100%   
+BenderBot/__init__            0      0   100%   
+setup                         4      0   100%   
+tests/test_bendermq          11      1    91%   15
+tests/test_config            13      1    92%   18
+tests/test_irc               32      1    97%   39
+tests/test_logger            13      1    92%   18
+-------------------------------------------------------
+TOTAL                       225     37    84%   
