@@ -15,4 +15,10 @@ wait = 10
 
 [RabbitMQ]
 host = 127.0.0.1
+port = 5672
+
+# If you wish to use RabbitMQ PlainAuth
+# username = admin
+# password = password
+
 exchange = irc

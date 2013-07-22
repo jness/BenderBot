@@ -6,13 +6,20 @@ class Queue(object):
     
     def __init__(self, **kwargs):
         self.host = kwargs.get('host', 'localhost')
+        self.port = int(kwargs.get('port', 5672))
+        self.username = kwargs.get('username')
+        self.password = kwargs.get('password')
         self.exchange = kwargs.get('exchange')
           
     def __connect(self):
         '''Connect to a RabbitMQ server'''
+		kwargs = dict(host=self.host, port=self.port)
         try:
+			if self.username and self.password:
+				credentials = pika.PlainCredentials(self.username, self.password)
+				kwargs['credentials'] = credentials
             self.connection = pika.BlockingConnection(pika.ConnectionParameters(
-                host=self.host))
+                **kwargs))
         except AMQPConnectionError, e:
             raise Exception('Unable to connect to %s: %s' % (self.host, e))
         
