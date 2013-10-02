@@ -5,7 +5,7 @@ from BenderBot.BenderMQ import Queue
 class MyQueue(Queue):
     '''My Custom Queue for sending messages on subscribe'''
     def __init__(self, **kwargs):
-        super(MyQueue, self).__init__()
+        super(MyQueue, self).__init__(**kwargs)
         self.irc = kwargs.pop('irc')
         self.exchange = kwargs.pop('exchange')
         
@@ -45,6 +45,11 @@ class IRCProcess(Process):
         '''write messages to the channel for anything in RabbitMQ'''
         self.logger.debug('%s started on %s' % (self, self.pid))
         cfg = dict(self.config.items('RabbitMQ'))
-        queue = MyQueue(host=cfg['host'], exchange='ircwrite',
-                        irc=self.irc)
+        username = None
+        password = None
+        if cfg.has_key('username'):
+            username = cfg['username']
+        if cfg.has_key('password'):
+            password = cfg['password']
+        queue = MyQueue(host=cfg['host'], username=username, password=password, exchange='ircwrite', irc=self.irc)
         queue.subscribe()
