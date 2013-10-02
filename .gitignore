@@ -10,3 +10,4 @@ subclass
 .coverage
 htmlcov
 logdir
+.idea
