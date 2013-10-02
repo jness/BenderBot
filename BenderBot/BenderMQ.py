@@ -13,7 +13,7 @@ class Queue(object):
           
     def __connect(self):
         '''Connect to a RabbitMQ server'''
-		kwargs = dict(host=self.host, port=self.port)
+	kwargs = dict(host=self.host, port=self.port)
         try:
 	    if self.username and self.password:
 		credentials = pika.PlainCredentials(self.username, self.password)
