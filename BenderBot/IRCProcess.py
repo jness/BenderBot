@@ -47,9 +47,19 @@ class IRCProcess(Process):
         cfg = dict(self.config.items('RabbitMQ'))
         username = None
         password = None
+        virtual_host = None
         if cfg.has_key('username'):
             username = cfg['username']
         if cfg.has_key('password'):
             password = cfg['password']
-        queue = MyQueue(host=cfg['host'], username=username, password=password, exchange='ircwrite', irc=self.irc)
+        if cfg.has_key('virtual_host'):
+            virtual_host = cfg['virtual_host']
+        queue = MyQueue(
+            host=cfg['host'],
+            username=username,
+            password=password,
+            exchange='ircwrite',
+            virtual_host=virtual_host,
+            irc=self.irc
+        )
         queue.subscribe()

@@ -21,4 +21,5 @@ port = 5672
 # username = admin
 # password = password
 
+#virtual_host = Bender
 exchange = irc
