@@ -10,10 +10,11 @@ class Queue(object):
         self.username = kwargs.get('username')
         self.password = kwargs.get('password')
         self.exchange = kwargs.get('exchange')
-          
+        self.virtual_host = kwargs.get('virtual_host')
+
     def __connect(self):
         '''Connect to a RabbitMQ server'''
-        kwargs = dict(host=self.host, port=self.port)
+        kwargs = dict(host=self.host, port=self.port, virtual_host=self.virtual_host)
         try:
             if self.username and self.password:
                 credentials = pika.PlainCredentials(self.username, self.password)
